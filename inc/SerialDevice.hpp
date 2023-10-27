@@ -96,6 +96,10 @@ class SerialDevice
     public:
         SerialDevice();
         ~SerialDevice();
+
+        /// @brief request for all available serial port devices in system
+        /// @param devices vector into which ports will be written (if exist)
+        void GetListOfAvailableDevices(std::vector<std::string>& devices);
         /// @brief create port instance
         /// @param path string with path to port (can be obtained in GetListOfAvailableDevices)
         /// @return 0 in case of success, other value in case of fault
@@ -103,12 +107,10 @@ class SerialDevice
         /// @brief delete port instance (if exist) 
         /// @return 0 in case of success, other value in case of fault
         int DeletePortInstance(void);
-        /// @brief request for all available serial port devices in system
-        /// @param devices vector into which ports will be written (if exist)
-        void GetListOfAvailableDevices(std::vector<std::string>& devices);
         /// @brief request for pointer to actual serial port instance
         /// @return pointer to port(if exist), nullptr if port does nor exist 
         const SerialPort* GetPointerToPort(void); 
+    
     private:
         SerialPort* port;
 };

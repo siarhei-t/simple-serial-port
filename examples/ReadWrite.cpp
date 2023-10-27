@@ -9,9 +9,12 @@
 
 #include "SerialDevice.hpp"
 
-
 int main(void)
 {
+    SerialDevice device;
+
+    const SerialPort* p_port = device.GetPointerToPort();
+
     std::cout<<"compiler test"<<std::endl;
     return 0;
 }
