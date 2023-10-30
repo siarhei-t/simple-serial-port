@@ -11,10 +11,15 @@
 
 int main(void)
 {
+    std::vector<std::string> devices;
+    
     SerialDevice device;
-
-    const SerialPort* p_port = device.GetPointerToPort();
-
-    std::cout<<"compiler test"<<std::endl;
+    device.GetListOfAvailableDevices(devices);
+    std::cout<<"Available ports :"<<std::endl;
+    for(auto i = 0; i < devices.size();i++)
+    {
+        std::cout<<"dev "<<int(i)<<" : "<<devices[i]<<std::endl;
+    }
+    
     return 0;
 }

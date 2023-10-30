@@ -5,14 +5,18 @@
 * Description        : 
 *******************************************************************************/
 
-#if defined(TARGET_LINUX)
-#include <sys/types.h>
-#include <dirent.h>
-#endif //TARGET_LINUX
-
 #include <iostream>
 
 #include "SerialDevice.hpp"
+
+//#if defined(TARGET_LINUX)
+#include <sys/types.h>
+#include <dirent.h>
+#include "SerialPortLinux.hpp"
+
+static SerialPortLinux* pActualPort;
+//#endif //TARGET_LINUX
+
 
 SerialDevice::SerialDevice()
 {
@@ -34,13 +38,13 @@ SerialDevice::~SerialDevice()
 
 void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
 {
-    #if defined(TARGET_LINUX)
+    devices.clear();
+
+    //#if defined(TARGET_LINUX)
     const char path[] = {"/dev/"};
     static const std::string dev_template[] = {"ttyUSB","ttyACM"};
     dirent *dp;
     DIR *dirp;
-
-    devices.clear();
     dirp = opendir(path);
     while ((dp = readdir(dirp)) != NULL)
     {
@@ -57,7 +61,7 @@ void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
         }
     }
     (void)closedir(dirp);
-    #endif //TARGET_LINUX
+    //#endif //TARGET_LINUX
 }
 
 const SerialPort *SerialDevice::GetPointerToPort()
@@ -67,7 +71,17 @@ const SerialPort *SerialDevice::GetPointerToPort()
 
 int SerialDevice::CreatePortInstance(const std::string path)
 {
-    return 0;
+    int stat = -1;
+    //#if defined(TARGET_LINUX)
+    pActualPort = new SerialPortLinux(path);
+    //#endif
+    if(pActualPort->GetPortState() == PortState::STATE_OPEN)
+    {
+        //this->port = (SerialPort*)(actualPort);
+        this->port = dynamic_cast<SerialPort*>(pActualPort);
+        if(this->port){stat = 0;}
+    }
+    return stat;
 }
 
 int SerialDevice::DeletePortInstance(void)
