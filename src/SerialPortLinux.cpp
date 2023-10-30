@@ -52,7 +52,8 @@ SerialPortLinux::~SerialPortLinux()
 
 void SerialPortLinux::Open(const std::string& path)
 {
-    this->port_desc = open(path.c_str(),O_RDWR);   
+    std::string dev_path = "/dev/"+ path;
+    this->port_desc = open(dev_path.c_str(),O_RDWR);   
     if(this->port_desc < 0)
     {
         //we have errors

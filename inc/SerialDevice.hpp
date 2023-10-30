@@ -109,7 +109,7 @@ class SerialDevice
         int DeletePortInstance(void);
         /// @brief request for pointer to actual serial port instance
         /// @return pointer to port(if exist), nullptr if port does nor exist 
-        const SerialPort* GetPointerToPort(void); 
+        SerialPort* GetPointerToPort(void); 
     
     private:
         SerialPort* port;

@@ -10,6 +10,8 @@ set (DIR_SRCS
 
 add_executable (${EXECUTABLE} ${DIR_SRCS})
 
+add_subdirectory(src)
+
 target_link_directories(${EXECUTABLE} PUBLIC src)
 target_link_libraries (${EXECUTABLE} simple-serial-port)
 
