@@ -53,6 +53,7 @@ struct PortConfig
     PortDataBits data_bits;
     PortParity   parity;
     PortStopBits stop_bits;
+    int          timeout_ms;
 };
 
 class SerialPort

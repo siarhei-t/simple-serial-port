@@ -77,7 +77,13 @@ void SerialPortLinux::Close(void)
 
 void SerialPortLinux::Setup(const PortConfig &config)
 {
-
+    this->LoadPortConfiguration();
+    this->SetBaudRate(config.baudrate);
+    this->SetDataBits(config.data_bits);
+    this->SetParity(  config.parity);
+    this->SetStopBits(config.stop_bits);
+    this->SetTimeOut( config.timeout_ms);
+    this->SavePortConfiguration();
 }
 
 void SerialPortLinux::WriteString(const std::string &data)
@@ -130,6 +136,43 @@ size_t SerialPortLinux::Read(std::vector<uint8_t>& data, size_t length)
 
     tcflush(this->port_desc,TCIOFLUSH);
     return bytes_read;
+}
+
+void SerialPortLinux::SetParity(const PortParity parity)
+{
+    switch(parity)
+    {
+        case PortParity::P_NONE:
+            this->tty.c_cflag &= ~PARENB;
+            break;
+
+        case PortParity::P_EVEN:
+            this->tty.c_cflag |=  PARENB;
+            this->tty.c_cflag &= ~PARODD;
+            break;
+
+        case PortParity::P_ODD:
+            this->tty.c_cflag |= PARENB;
+            this->tty.c_cflag |= PARODD;
+            break;
+    }
+}
+
+void SerialPortLinux::SetBaudRate(const PortBaudRate baudrate)
+{
+
+}
+
+void SerialPortLinux::SetDataBits(const PortDataBits num_of_data_bits)
+{
+}
+
+void SerialPortLinux::SetStopBits(const PortStopBits num_of_stop_bits)
+{
+}
+
+void SerialPortLinux::SetTimeOut(const int timeout_ms)
+{
 }
 
 void SerialPortLinux::LoadPortConfiguration()

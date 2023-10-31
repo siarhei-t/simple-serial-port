@@ -47,6 +47,21 @@ class SerialPortLinux : public SerialPort
         int port_desc;
         // \brief struct with port configuration
         struct termios tty;
+        // \brief setup parity bits in tty struct
+        // \param parity expected parity mode
+        void SetParity(const PortParity parity);
+        // \brief setup baudrate in tty struct
+        // \param baudrate expected port baudrate
+        void SetBaudRate(const PortBaudRate baudrate);
+        // \brief setup data bits in tty struct
+        // \param num_of_data_bits expected number of data bits in frame
+        void SetDataBits(const PortDataBits num_of_data_bits);
+        // \brief setup stop bits in tty struct
+        // \param num_of_stop_bits expected number of stop bits in frame
+        void SetStopBits(const PortStopBits num_of_stop_bits);
+        // \brief setup timeout in tty struct
+        // \param timeout_ms expected timeout i ms for data read
+        void SetTimeOut(const int timeout_ms);
         // \brief load actual configuration to the tty struct 
         void LoadPortConfiguration();
         // \brief save tty struct as actual configuration
