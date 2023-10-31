@@ -12,12 +12,13 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include "SerialPortLinux.hpp"
-
 static SerialPortLinux* pActualPort;
-#endif
-
-#if defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
+#elif defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
 #include <windows.h>
+#include "SerialPortWindows.hpp"
+static SerialPortWindows* pActualPort;
+#else
+static SerialPort* pActualPort;
 #endif
 
 SerialDevice::SerialDevice()
@@ -90,14 +91,25 @@ SerialPort *SerialDevice::GetPointerToPort()
 int SerialDevice::CreatePortInstance(const std::string path)
 {
     int stat = -1;
-    #if defined(PLATFORM_LINUX)
+    #if defined(PLATFORM_LINUX) && !defined(PLATFORM_WINDOWS) 
     pActualPort = new SerialPortLinux(path);
-    if(pActualPort->GetPortState() == PortState::STATE_OPEN)
-    {
-        this->port = dynamic_cast<SerialPort*>(pActualPort);
-        if(this->port){stat = 0;}
-    }
+    #elif defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
+    pActualPort = new SerialPortWindows(path);
     #endif
+
+    try
+    {
+       if(pActualPort->GetPortState() == PortState::STATE_OPEN)
+        {
+            this->port = dynamic_cast<SerialPort*>(pActualPort);
+            if(this->port){stat = 0;}
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
     return stat;
 }
 
