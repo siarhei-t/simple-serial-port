@@ -11,8 +11,6 @@
 #include <string>
 #include <vector>
 
-#define RETVAL_SUCCESS 0
-
 enum class PortState
 {
     STATE_OPEN,

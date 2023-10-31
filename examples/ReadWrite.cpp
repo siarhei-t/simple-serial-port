@@ -25,6 +25,7 @@ int main(void)
     }
     std::cout<<"*************************"<<std::endl;
     
+    /*
     if(devices.size() > 0)
     {
         std::cout<<"opening first available port..."<<std::endl;
@@ -61,6 +62,6 @@ int main(void)
         port->Close();
         
     }
-
+    */
     return 0;
 }
