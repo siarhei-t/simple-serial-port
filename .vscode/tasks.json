@@ -27,5 +27,11 @@
             "command": "cmake -DTARGET_WINDOWS=ON -Bbuild",
             "problemMatcher": []
         },
+        {
+            "type": "shell",
+            "label": "Configure-Linux",
+            "command": "cmake -DTARGET_LINUX=ON -Bbuild",
+            "problemMatcher": []
+        },
     ]
 }
