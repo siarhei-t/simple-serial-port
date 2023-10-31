@@ -14,11 +14,11 @@
 #include "SerialPortLinux.hpp"
 
 static SerialPortLinux* pActualPort;
-#endif //LINUX
+#endif
 
 #if defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
 #include <windows.h>
-#endif //WINDOWS
+#endif
 
 SerialDevice::SerialDevice()
 {
@@ -78,7 +78,7 @@ void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
         }
     }
     (void)closedir(dirp);
-    #endif //TARGET_LINUX
+    #endif
 
 }
 
@@ -94,7 +94,6 @@ int SerialDevice::CreatePortInstance(const std::string path)
     pActualPort = new SerialPortLinux(path);
     if(pActualPort->GetPortState() == PortState::STATE_OPEN)
     {
-        //this->port = (SerialPort*)(actualPort);
         this->port = dynamic_cast<SerialPort*>(pActualPort);
         if(this->port){stat = 0;}
     }

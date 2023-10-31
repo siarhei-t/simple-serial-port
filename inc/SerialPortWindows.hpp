@@ -1,26 +1,21 @@
 /******************************************************************************
-* File Name          : SerialPortLinux.hpp
+* File Name          : SerialPortWindows.hpp
 * Author             : 
 * Version            : v 1.0
-* Description        : header for SerialPortLinux.cpp
+* Description        : header for SerialPortWindows.cpp
 *******************************************************************************/
-#ifndef SERIAL_PORT_LINUX_H
-#define SERIAL_PORT_LINUX_H
-
-#include <unistd.h>
-#include <fcntl.h> 
-#include <errno.h>
-#include <termios.h>
+#ifndef SERIAL_PORT_WINDOWS_H
+#define SERIAL_PORT_WINDOWS_H
 
 #include "SerialDevice.hpp"
 
-class SerialPortLinux : public SerialPort
+class SerialPortWindows : public SerialPort
 {
     public:
     
-        SerialPortLinux();
-        SerialPortLinux(const std::string& path);
-        ~SerialPortLinux();
+        SerialPortWindows();
+        SerialPortWindows(const std::string& path);
+        ~SerialPortWindows();
         
         // \brief open port
         // \param string with path to device
@@ -55,4 +50,4 @@ class SerialPortLinux : public SerialPort
         void SetDefaultPortConfiguration();
 };
 
-#endif /*SERIAL_PORT_LINUX_H*/
+#endif /*SERIAL_PORT_WINDOWS_H*/
