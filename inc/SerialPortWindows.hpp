@@ -7,6 +7,7 @@
 #ifndef SERIAL_PORT_WINDOWS_H
 #define SERIAL_PORT_WINDOWS_H
 
+#include <windows.h>
 #include "SerialDevice.hpp"
 
 class SerialPortWindows : public SerialPort
@@ -39,9 +40,9 @@ class SerialPortWindows : public SerialPort
     
     private:
         // \brief opened port file descriptor
-        int port_desc;
+        HANDLE port_desc;
         // \brief struct with port configuration
-        struct termios tty;
+        //struct termios tty;
         // \brief load actual configuration to the tty struct 
         void LoadPortConfiguration();
         // \brief save tty struct as actual configuration

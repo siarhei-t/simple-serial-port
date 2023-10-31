@@ -11,6 +11,9 @@ message("********************************* ")
 if(TARGET_WINDOWS)
 message("target platform selected as Windows")
 set(TARGET_PLATFORM PLATFORM_WINDOWS)
+set(PLATFORM_SOURCES
+        SerialPortWindows.cpp
+)
 endif()
 
 if(TARGET_LINUX)
