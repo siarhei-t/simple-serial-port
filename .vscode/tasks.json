@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Build",
+            "command": "cmake --build build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "Rebuild",
+            "command": "cmake --build build --clean-first",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "Configure-Windows",
+            "command": "cmake -DTARGET_WINDOWS=ON -Bbuild",
+            "problemMatcher": []
+        },
+    ]
+}
