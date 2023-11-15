@@ -91,7 +91,35 @@ void SerialPortWindows::WriteBinary(const std::vector<uint8_t>& data)
 
 size_t SerialPortWindows::Read(std::vector<uint8_t>& data, size_t length)
 {
-    return 0;
+    uint8_t* p_buffer    = new uint8_t[length];
+    size_t bytes_to_read = length;
+    DWORD bytes_read     = 0;
+    
+    while(bytes_to_read != 0)
+    {
+        WINBOOL n = ReadFile(this->port_desc, &p_buffer[bytes_read],length, &bytes_read, NULL);
+        if(n == 0) // error with port access
+        {
+            delete[] p_buffer;
+            throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);
+        }
+        else if((n > 0) && (n <= bytes_to_read)) //reading 
+        {
+            bytes_to_read = bytes_to_read - bytes_read;
+        }
+        else if(bytes_read == 0) //nothing to read
+        {
+            break;
+        }  
+    }    
+    if (bytes_read > 0)
+    {
+        data.insert(data.begin(),&p_buffer[0],p_buffer + bytes_read);
+    }
+    delete[] p_buffer;
+
+    FlushFileBuffers(this->port_desc);
+    return bytes_read;
 }
 
 void SerialPortWindows::LoadPortConfiguration()
