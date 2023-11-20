@@ -88,13 +88,13 @@ SerialPort *SerialDevice::GetPointerToPort()
     return this->port;
 }
 
-int SerialDevice::CreatePortInstance(const std::string path)
+int SerialDevice::CreatePortInstance(const std::string path,const PortConfig& config)
 {
     int stat = -1;
     #if defined(PLATFORM_LINUX) && !defined(PLATFORM_WINDOWS) 
-    pActualPort = new SerialPortLinux(path);
+    pActualPort = new SerialPortLinux(path,config);
     #elif defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
-    pActualPort = new SerialPortWindows(path);
+    pActualPort = new SerialPortWindows(path,config);
     #endif
 
     try

@@ -17,7 +17,7 @@ SerialPortLinux::SerialPortLinux()
     this->state     = PortState::STATE_CLOSE;
 }
 
-SerialPortLinux::SerialPortLinux(const std::string& path)
+SerialPortLinux::SerialPortLinux(const std::string& path,const PortConfig& config)
 {
     try
     {
@@ -27,15 +27,12 @@ SerialPortLinux::SerialPortLinux(const std::string& path)
     {
         std::cerr << e.what() << '\n';
     }
-
     // set default config in case of success
     if(this->GetPortState() ==  PortState::STATE_OPEN)
     {
         try
         {
-            this->LoadPortConfiguration();
-            this->SetDefaultPortConfiguration();
-            this->SavePortConfiguration();
+            this->Setup(config);
         }
         catch(const std::exception& e)
         {
@@ -78,6 +75,7 @@ void SerialPortLinux::Close(void)
 void SerialPortLinux::Setup(const PortConfig &config)
 {
     this->LoadPortConfiguration();
+    this->SetDefaultPortConfiguration();
     this->SetBaudRate(config.baudrate);
     this->SetDataBits(config.data_bits);
     this->SetParity(  config.parity);
@@ -145,34 +143,102 @@ void SerialPortLinux::SetParity(const PortParity parity)
         case PortParity::P_NONE:
             this->tty.c_cflag &= ~PARENB;
             break;
-
         case PortParity::P_EVEN:
             this->tty.c_cflag |=  PARENB;
             this->tty.c_cflag &= ~PARODD;
             break;
-
         case PortParity::P_ODD:
             this->tty.c_cflag |= PARENB;
             this->tty.c_cflag |= PARODD;
+            break;
+        default:
+            throw std::runtime_error(std::string() +"unsupported parameter type passed to :" + __FUNCTION__);
             break;
     }
 }
 
 void SerialPortLinux::SetBaudRate(const PortBaudRate baudrate)
 {
-
+    switch(baudrate)
+    {
+        case PortBaudRate::BD_9600:
+            cfsetispeed(&(this->tty), B9600);
+            cfsetospeed(&(this->tty), B9600);
+            break;
+        case PortBaudRate::BD_19200:
+            cfsetispeed(&(this->tty), B19200);
+            cfsetospeed(&(this->tty), B19200);
+            break;
+        case PortBaudRate::BD_38400:
+            cfsetispeed(&(this->tty), B38400);
+            cfsetospeed(&(this->tty), B38400);
+            break;
+        case PortBaudRate::BD_57600:
+            cfsetispeed(&(this->tty), B57600);
+            cfsetospeed(&(this->tty), B57600);
+            break;
+        case PortBaudRate::BD_115200:
+            cfsetispeed(&(this->tty), B1152000);
+            cfsetospeed(&(this->tty), B1152000);
+            break;
+        default:
+            throw std::runtime_error(std::string() +"unsupported parameter type passed to :" + __FUNCTION__);
+            break;
+    }
 }
 
 void SerialPortLinux::SetDataBits(const PortDataBits num_of_data_bits)
 {
+    this->tty.c_cflag &= ~CSIZE;
+    switch(num_of_data_bits)
+    {
+        case PortDataBits::DB_FIVE:
+            this->tty.c_cflag |= CS5;
+            break;
+        case PortDataBits::DB_SIX:
+            this->tty.c_cflag |= CS6;
+            break;
+        case PortDataBits::DB_SEVEN:
+            this->tty.c_cflag |= CS7;
+            break;
+        case PortDataBits::DB_EIGHT:
+            this->tty.c_cflag |= CS8;
+            break;
+        default:
+            throw std::runtime_error(std::string() +"unsupported parameter type passed to :" + __FUNCTION__);
+            break;    
+    }
 }
 
 void SerialPortLinux::SetStopBits(const PortStopBits num_of_stop_bits)
 {
+    switch(num_of_stop_bits)
+    {
+        case PortStopBits::SB_ONE:
+            this->tty.c_cflag &= ~CSTOPB;
+            break;
+        case PortStopBits::SB_TWO:
+            this->tty.c_cflag |= CSTOPB;
+            break;
+        default:
+            throw std::runtime_error(std::string() +"unsupported parameter type passed to :" + __FUNCTION__);
+            break;
+    }
 }
 
 void SerialPortLinux::SetTimeOut(const int timeout_ms)
 {
+    const unsigned char max_timeout = 0xFF;
+    this->tty.c_cc[VMIN] = 0;
+    int timeout = timeout_ms/100;
+    if(timeout > max_timeout)
+    {
+        throw std::runtime_error(std::string() +"unsupported parameter type passed to :" + __FUNCTION__);
+    }
+    else
+    {
+        this->tty.c_cc[VTIME] = timeout;
+    }   
 }
 
 void SerialPortLinux::LoadPortConfiguration()
@@ -201,28 +267,20 @@ void SerialPortLinux::SavePortConfiguration()
 
 void SerialPortLinux::SetDefaultPortConfiguration()
 {
-    
-    // default config :
-    // 1 start bit, 1 stop bit,8 data bits, no parity bits
-    // baudrate 19200
-    
-    this->tty.c_cflag &= ~PARENB;
-    this->tty.c_cflag &= ~CSTOPB;
-    this->tty.c_cflag &= ~CSIZE;
-    this->tty.c_cflag |= CS8;
+    //hardware flow control disabled
     this->tty.c_cflag &= ~CRTSCTS;
+    //disable software flow control
+    this->tty.c_iflag &= ~(IXON | IXOFF | IXANY);
+    // only raw data
+    this->tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
+    // read enabled and ctrl lines ignored  
     this->tty.c_cflag |= CREAD | CLOCAL;
+    // all features disabled (echo, new lines, modem modes, etc.)
     this->tty.c_lflag &= ~ICANON;
     this->tty.c_lflag &= ~ECHO;
     this->tty.c_lflag &= ~ECHOE;
     this->tty.c_lflag &= ~ECHONL;
     this->tty.c_lflag &= ~ISIG;
-    this->tty.c_iflag &= ~(IXON | IXOFF | IXANY);
-    this->tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
     this->tty.c_oflag &= ~OPOST;
     this->tty.c_oflag &= ~ONLCR;
-    this->tty.c_cc[VTIME] = 20;
-    this->tty.c_cc[VMIN] = 0;
-    cfsetispeed(&(this->tty), B19200);
-    cfsetospeed(&(this->tty), B19200);
 }

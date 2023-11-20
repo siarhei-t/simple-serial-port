@@ -102,7 +102,7 @@ class SerialDevice
         /// @brief create port instance
         /// @param path string with path to port (can be obtained in GetListOfAvailableDevices)
         /// @return 0 in case of success, other value in case of fault
-        int CreatePortInstance(const std::string path);
+        int CreatePortInstance(const std::string path, const PortConfig& config);
         /// @brief delete port instance (if exist) 
         /// @return 0 in case of success, other value in case of fault
         int DeletePortInstance(void);
