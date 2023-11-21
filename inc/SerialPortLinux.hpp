@@ -19,7 +19,7 @@ class SerialPortLinux : public SerialPort
     public:
     
         SerialPortLinux();
-        SerialPortLinux(const std::string& path,const PortConfig& config);
+        SerialPortLinux(const std::string& path, const PortConfig& config);
         ~SerialPortLinux();
         
         // \brief open port

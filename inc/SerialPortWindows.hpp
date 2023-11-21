@@ -15,7 +15,7 @@ class SerialPortWindows : public SerialPort
     public:
     
         SerialPortWindows();
-        SerialPortWindows(const std::string& path);
+        SerialPortWindows(const std::string& path, const PortConfig& config);
         ~SerialPortWindows();
         
         // \brief open port
@@ -42,13 +42,26 @@ class SerialPortWindows : public SerialPort
         // \brief opened port file descriptor
         HANDLE port_desc;
         // \brief struct with port configuration
-        //struct termios tty;
+        DCB tty;
+         // \brief setup parity bits in tty struct
+        // \param parity expected parity mode
+        void SetParity(const PortParity parity);
+        // \brief setup baudrate in tty struct
+        // \param baudrate expected port baudrate
+        void SetBaudRate(const PortBaudRate baudrate);
+        // \brief setup data bits in tty struct
+        // \param num_of_data_bits expected number of data bits in frame
+        void SetDataBits(const PortDataBits num_of_data_bits);
+        // \brief setup stop bits in tty struct
+        // \param num_of_stop_bits expected number of stop bits in frame
+        void SetStopBits(const PortStopBits num_of_stop_bits);
+        // \brief setup timeout in tty struct
+        // \param timeout_ms expected timeout i ms for data read
+        void SetTimeOut(const int timeout_ms);
         // \brief load actual configuration to the tty struct 
         void LoadPortConfiguration();
         // \brief save tty struct as actual configuration
         void SavePortConfiguration();
-        // \brief load default configuration to the tty struct 
-        void SetDefaultPortConfiguration();
 };
 
 #endif /*SERIAL_PORT_WINDOWS_H*/

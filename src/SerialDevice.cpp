@@ -14,7 +14,6 @@
 #include "SerialPortLinux.hpp"
 static SerialPortLinux* pActualPort;
 #elif defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
-#include <windows.h>
 #include "SerialPortWindows.hpp"
 static SerialPortWindows* pActualPort;
 #else
@@ -96,7 +95,6 @@ int SerialDevice::CreatePortInstance(const std::string path,const PortConfig& co
     #elif defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
     pActualPort = new SerialPortWindows(path,config);
     #endif
-
     try
     {
        if(pActualPort->GetPortState() == PortState::STATE_OPEN)
