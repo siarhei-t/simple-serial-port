@@ -19,14 +19,10 @@ SerialPortLinux::SerialPortLinux()
 
 SerialPortLinux::SerialPortLinux(const std::string& path,const PortConfig& config)
 {
-    try
-    {
-        this->Open(path);
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
+    this->port_desc = -1;
+    this->state     = PortState::STATE_CLOSE;
+    try{this->Open(path);}
+    catch(const std::exception& e){std::cerr << e.what() << '\n';}
     // set default config in case of success
     if(this->GetPortState() ==  PortState::STATE_OPEN)
     {
@@ -44,7 +40,7 @@ SerialPortLinux::SerialPortLinux(const std::string& path,const PortConfig& confi
 
 SerialPortLinux::~SerialPortLinux()
 {
-
+    this->Close();
 }
 
 void SerialPortLinux::Open(const std::string& path)
@@ -246,10 +242,7 @@ void SerialPortLinux::LoadPortConfiguration()
     if(this->state == PortState::STATE_OPEN)
     {
         int stat = tcgetattr(this->port_desc, &(this->tty));
-        if(stat != 0)
-        {
-            throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);
-        }
+        if(stat == 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
     }
 }
 
@@ -258,10 +251,7 @@ void SerialPortLinux::SavePortConfiguration()
     if(this->state == PortState::STATE_OPEN)
     {
         int stat = tcsetattr(this->port_desc, TCSANOW, &(this->tty));
-        if(stat != 0)
-        {
-            throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);
-        }
+        if(stat == 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
     }
 }
 

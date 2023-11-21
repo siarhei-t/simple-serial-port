@@ -19,14 +19,10 @@ SerialPortWindows::SerialPortWindows()
 
 SerialPortWindows::SerialPortWindows(const std::string& path, const PortConfig& config)
 {
-    try
-    {
-        this->Open(path);
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
+    this->port_desc = INVALID_HANDLE_VALUE;
+    this->state     = PortState::STATE_CLOSE;
+    try{this->Open(path);}
+    catch(const std::exception& e){std::cerr << e.what() << '\n';}
     // set default config in case of success
     if(this->GetPortState() ==  PortState::STATE_OPEN)
     {
@@ -44,7 +40,7 @@ SerialPortWindows::SerialPortWindows(const std::string& path, const PortConfig& 
 
 SerialPortWindows::~SerialPortWindows()
 {
-
+    this->Close();
 }
 
 void SerialPortWindows::Open(const std::string& path)
@@ -241,21 +237,15 @@ void SerialPortWindows::LoadPortConfiguration()
     if(this->state == PortState::STATE_OPEN)
     {
         WINBOOL stat = GetCommState(this->port_desc, &this->tty);
-        if(stat == 0)
-        {
-            throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);
-        }
+        if(stat == 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
     }
 }
 
 void SerialPortWindows::SavePortConfiguration()
 {
-if(this->state == PortState::STATE_OPEN)
+    if(this->state == PortState::STATE_OPEN)
     {
         WINBOOL stat = SetCommState(this->port_desc, &this->tty);
-        if(stat == 0)
-        {
-            throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);
-        }
+        if(stat == 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
     }
 }

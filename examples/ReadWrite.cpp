@@ -47,7 +47,7 @@ int main(void)
     
     if(port != nullptr)
     {
-        std::string testLine = "This is a test string.";
+        std::string testLine = "This is a test string. Abcdefghijklmop";
         std::vector<uint8_t> buffer;
 
         std::cout<<"opened port with name : " <<devices[0]<<std::endl;
