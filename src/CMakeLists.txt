@@ -7,9 +7,10 @@ enable_language(CXX)
 option(TARGET_WINDOWS "build for Windows" OFF)
 option(TARGET_LINUX   "build for Lunux"   OFF)
 
-message("********************************* ")
+message("*************************************")
+message("")
 if(TARGET_WINDOWS)
-message("target platform selected as Windows")
+message("target platform selected as Windows.")
 set(TARGET_PLATFORM PLATFORM_WINDOWS)
 set(PLATFORM_SOURCES
         SerialPortWindows.cpp
@@ -17,7 +18,7 @@ set(PLATFORM_SOURCES
 endif()
 
 if(TARGET_LINUX)
-message("target platform selected as Linux")
+message("target platform selected as Linux.")
 set(TARGET_PLATFORM PLATFORM_LINUX)
 set(PLATFORM_SOURCES
         SerialPortLinux.cpp
@@ -27,7 +28,8 @@ endif()
 set(COMMON_SOURCES
         SerialDevice.cpp
 )
-message("********************************* ")
+message("")
+message("*************************************")
 
 if(NOT DEFINED TARGET_PLATFORM)
 message( SEND_ERROR "target platform is nor defined.")

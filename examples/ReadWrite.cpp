@@ -11,7 +11,7 @@
 
 int main(void)
 {
-    SerialPort* port;
+    SerialPort* port = nullptr;
     SerialDevice device;
     const PortConfig config = 
     {
@@ -36,8 +36,10 @@ int main(void)
         std::cout<<"please select port to open..."<<std::endl;
         std::cin>>port_id;
         std::cout<<"trying to open port with id "<<int(port_id)<<std::endl;
-        device.CreatePortInstance(devices[port_id],config);
-        port = device.GetPointerToPort();
+        if(port_id <= (devices.size() - 1))
+        {
+            port = device.CreatePortInstance(devices[port_id],config);
+        }
     }
     else
     {
@@ -68,6 +70,10 @@ int main(void)
         
         port->Close();
         
+    }
+    else
+    {
+        std::cout<<"Failed to open selected port."<<std::endl;
     }
     
     return 0;

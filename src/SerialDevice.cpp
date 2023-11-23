@@ -7,35 +7,36 @@
 
 #include <iostream>
 #include "SerialDevice.hpp"
-
+#include <iostream>
 #if defined(PLATFORM_LINUX) && !defined(PLATFORM_WINDOWS)
 #include <sys/types.h>
 #include <dirent.h>
 #include "SerialPortLinux.hpp"
-static SerialPortLinux* pActualPort;
+static std::vector<SerialPortLinux*> platform_ports;
 #elif defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
 #include "SerialPortWindows.hpp"
-static SerialPortWindows* pActualPort;
+static std::vector<SerialPortWindows*> platform_ports;
 #else
-static SerialPort* pActualPort;
+static std::vector<SerialPort*> platform_ports;
 #endif
 
 SerialDevice::SerialDevice()
 {
-    this->port = nullptr;
+    //nothing to create
 }
 
 SerialDevice::~SerialDevice()
 {
-    if(this->port != nullptr)
+    while(this->ports.size() > 0)
     {
-        if(this->port->GetPortState() != PortState::STATE_CLOSE)
+        if(this->ports.back()->GetPortState() != PortState::STATE_CLOSE)
         {
-            this->port->Close(); 
+            this->ports.back()->Close();
         }
-        delete this->port;
-        this->port = nullptr;
-    }    
+        delete platform_ports.back();
+        platform_ports.pop_back();
+        this->ports.pop_back();
+    }
 }
 
 void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
@@ -79,28 +80,42 @@ void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
     }
     (void)closedir(dirp);
     #endif
-
 }
 
-SerialPort *SerialDevice::GetPointerToPort()
+void SerialDevice::GetListOfCreatedDevices(std::vector<std::string> &devices)
 {
-    return this->port;
+    devices.clear();
+    for(auto i = 0; i < this->devices.size(); i++)
+    {
+        devices.push_back(this->devices[i]);
+    }
 }
 
-int SerialDevice::CreatePortInstance(const std::string path,const PortConfig& config)
+SerialPort* SerialDevice::CreatePortInstance(const std::string path,const PortConfig& config)
 {
-    int stat = -1;
+    SerialPort* created_port = nullptr;
     #if defined(PLATFORM_LINUX) && !defined(PLATFORM_WINDOWS) 
-    pActualPort = new SerialPortLinux(path,config);
+    SerialPortLinux* p_actual_port = new SerialPortLinux(path,config);
     #elif defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
-    pActualPort = new SerialPortWindows(path,config);
+    SerialPortWindows* p_actual_port = new SerialPortWindows(path,config);
+    #else
+    SerialPort* p_actual_port = nullptr;
     #endif
     try
     {
-       if(pActualPort->GetPortState() == PortState::STATE_OPEN)
+        if(p_actual_port->GetPortState() == PortState::STATE_OPEN)
         {
-            this->port = dynamic_cast<SerialPort*>(pActualPort);
-            if(this->port){stat = 0;}
+            created_port = dynamic_cast<SerialPort*>(p_actual_port);
+            if(created_port != NULL)
+            {
+                platform_ports.push_back(p_actual_port);
+                this->devices.push_back(path);
+                this->ports.push_back(created_port);
+            }
+        }
+        else
+        {
+            delete p_actual_port;
         }
     }
     catch(const std::exception& e)
@@ -108,12 +123,6 @@ int SerialDevice::CreatePortInstance(const std::string path,const PortConfig& co
         std::cerr << e.what() << '\n';
     }
     
-    return stat;
+    return created_port;
 }
-
-int SerialDevice::DeletePortInstance(void)
-{
-    return 0;
-}
-
 
