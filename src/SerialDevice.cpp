@@ -94,6 +94,15 @@ void SerialDevice::GetListOfCreatedDevices(std::vector<std::string> &devices)
 SerialPort* SerialDevice::CreatePortInstance(const std::string path,const PortConfig& config)
 {
     SerialPort* created_port = nullptr;
+    for(auto i = 0; i < this->devices.size(); i++)
+    {
+        if(this->devices[i].compare(path) == 0)
+        {
+            //port already created and exist
+            created_port = this->ports[i];
+            return created_port;
+        }
+    }
     #if defined(PLATFORM_LINUX) && !defined(PLATFORM_WINDOWS) 
     SerialPortLinux* p_actual_port = new SerialPortLinux(path,config);
     #elif defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
