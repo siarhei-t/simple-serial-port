@@ -242,7 +242,7 @@ void SerialPortLinux::LoadPortConfiguration()
     if(this->state == PortState::STATE_OPEN)
     {
         int stat = tcgetattr(this->port_desc, &(this->tty));
-        if(stat == 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
+        if(stat != 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
     }
 }
 
@@ -251,7 +251,7 @@ void SerialPortLinux::SavePortConfiguration()
     if(this->state == PortState::STATE_OPEN)
     {
         int stat = tcsetattr(this->port_desc, TCSANOW, &(this->tty));
-        if(stat == 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
+        if(stat != 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
     }
 }
 
