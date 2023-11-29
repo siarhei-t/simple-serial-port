@@ -44,12 +44,13 @@ void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
     devices.clear();
 
     #if defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
-    char* dev_path = new char[256];
+    wchar_t* dev_path = new wchar_t[256];
 
     for (auto i = 0; i < 255; i++)
     {
         std::string device = "COM" + std::to_string(i);
-        DWORD result = QueryDosDevice(device.c_str(),dev_path, 256);
+        std::wstring converted_device =  std::wstring(device.begin(),device.end());
+        DWORD result = QueryDosDevice(converted_device.c_str(),dev_path, 256);
         if (result != 0)
         {
             devices.push_back(device);
@@ -98,6 +99,7 @@ SerialPort* SerialDevice::CreatePortInstance(const std::string path,const PortCo
     {
         if(this->devices[i].compare(path) == 0)
         {
+            std::cout<<"port already exist, return created pointer..."<<std::endl;
             //port already created and exist
             created_port = this->ports[i];
             return created_port;

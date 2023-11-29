@@ -45,7 +45,9 @@ SerialPortWindows::~SerialPortWindows()
 
 void SerialPortWindows::Open(const std::string& path)
 {
-    this->port_desc = CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
+    std::wstring converted_path =  std::wstring(path.begin(),path.end());
+    LPCWSTR file_name = converted_path.c_str();
+    this->port_desc = CreateFile(file_name, GENERIC_READ | GENERIC_WRITE,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
     if(this->port_desc == INVALID_HANDLE_VALUE)
     {
         throw std::runtime_error(std::string("Could not open device on path :") + path);
