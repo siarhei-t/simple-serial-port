@@ -27,16 +27,6 @@ SerialDevice::SerialDevice()
 
 SerialDevice::~SerialDevice()
 {
-    while(this->ports.size() > 0)
-    {
-        if(this->ports.back()->GetPortState() != PortState::STATE_CLOSE)
-        {
-            this->ports.back()->Close();
-        }
-        delete platform_ports.back();
-        platform_ports.pop_back();
-        this->ports.pop_back();
-    }
 }
 
 void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
@@ -95,44 +85,6 @@ void SerialDevice::GetListOfCreatedDevices(std::vector<std::string> &devices)
 SerialPort* SerialDevice::CreatePortInstance(const std::string path,const PortConfig& config)
 {
     SerialPort* created_port = nullptr;
-    for(auto i = 0; i < this->devices.size(); i++)
-    {
-        if(this->devices[i].compare(path) == 0)
-        {
-            std::cout<<"port already exist, return created pointer..."<<std::endl;
-            //port already created and exist
-            created_port = this->ports[i];
-            return created_port;
-        }
-    }
-    #if defined(PLATFORM_LINUX) && !defined(PLATFORM_WINDOWS) 
-    SerialPortLinux* p_actual_port = new SerialPortLinux(path,config);
-    #elif defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
-    SerialPortWindows* p_actual_port = new SerialPortWindows(path,config);
-    #else
-    SerialPort* p_actual_port = nullptr;
-    #endif
-    try
-    {
-        if(p_actual_port->GetPortState() == PortState::STATE_OPEN)
-        {
-            created_port = dynamic_cast<SerialPort*>(p_actual_port);
-            if(created_port != NULL)
-            {
-                platform_ports.push_back(p_actual_port);
-                this->devices.push_back(path);
-                this->ports.push_back(created_port);
-            }
-        }
-        else
-        {
-            delete p_actual_port;
-        }
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
     
     return created_port;
 }

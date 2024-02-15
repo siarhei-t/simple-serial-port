@@ -1,9 +1,11 @@
-/******************************************************************************
-* File Name          : SerialPortLinux.hpp
-* Author             : 
-* Version            : v 1.0
-* Description        : header for SerialPortLinux.cpp
-*******************************************************************************/
+/**
+ * @file SerialPortLinux.hpp
+ *
+ * @brief 
+ *
+ * @author Siarhei Tatarchanka
+ *
+ */
 #ifndef SERIAL_PORT_LINUX_H
 #define SERIAL_PORT_LINUX_H
 
@@ -18,56 +20,54 @@ class SerialPortLinux : public SerialPort
 {
     public:
     
-        SerialPortLinux();
-        SerialPortLinux(const std::string& path, const PortConfig& config);
+        SerialPortLinux():port_desc(-1){};
         ~SerialPortLinux();
-        
-        // \brief open port
-        // \param string with path to device
-        void Open(const std::string& path);
-        // \brief close actual port if opened
-        void Close(void);
-        // \brief setup port with new configuration
-        // \param struct with new configuration
-        void Setup(const PortConfig& config);
-        // \brief write string data to actual port
-        // \param data string object with data
-        void WriteString(const std::string& data);
-        // \brief write raw data to actual port
-        // \param data string object with data
-        void WriteBinary(const std::vector<uint8_t>& data);
-        // \brief read data from actual port
-        // \param data reference to vector with buffer for data
-        // \param length how many bytes we expect to read during timeout
-        // \returns how many bytes we read actually
-        size_t Read(std::vector<uint8_t>& data, size_t length);
+        /// @brief open port
+        /// @param path string with path to device
+        void openPort(const std::string& path);
+        /// @brief close actual port if opened
+        void closePort();
+        /// @brief setup port with new configuration
+        /// @param config struct with port configuration
+        void setup(const PortConfig& config);
+        /// @brief write string data to actual port
+        /// @param data string object with data to send
+        void writeString(const std::string& data);
+        /// @brief write raw data to actual port
+        /// @param data string object with data to send
+        void writeBinary(const std::vector<uint8_t>& data);
+        /// @brief read raw data from port 
+        /// @param data reference to vector with buffer for data
+        /// @param length how many bytes we expect to read during timeout
+        /// @returns how many bytes we read actually
+        size_t readBinary(std::vector<uint8_t>& data, size_t length);
     
     private:
-        // \brief opened port file descriptor
+        /// @brief opened port file descriptor
         int port_desc;
-        // \brief struct with port configuration
+        /// @brief struct with port configuration
         struct termios tty;
-        // \brief setup parity bits in tty struct
-        // \param parity expected parity mode
-        void SetParity(const PortParity parity);
+        /// @brief setup parity bits in tty struct
+        /// @param parity expected parity mode
+        void setParity(const PortParity parity);
         // \brief setup baudrate in tty struct
         // \param baudrate expected port baudrate
-        void SetBaudRate(const PortBaudRate baudrate);
+        void setBaudRate(const PortBaudRate baudrate);
         // \brief setup data bits in tty struct
         // \param num_of_data_bits expected number of data bits in frame
-        void SetDataBits(const PortDataBits num_of_data_bits);
+        void setDataBits(const PortDataBits num_of_data_bits);
         // \brief setup stop bits in tty struct
         // \param num_of_stop_bits expected number of stop bits in frame
-        void SetStopBits(const PortStopBits num_of_stop_bits);
+        void setStopBits(const PortStopBits num_of_stop_bits);
         // \brief setup timeout in tty struct
         // \param timeout_ms expected timeout i ms for data read
-        void SetTimeOut(const int timeout_ms);
+        void setTimeOut(const int timeout_ms);
         // \brief load actual configuration to the tty struct 
-        void LoadPortConfiguration();
+        void loadPortConfiguration();
         // \brief save tty struct as actual configuration
-        void SavePortConfiguration();
+        void savePortConfiguration();
         // \brief load default configuration to the tty struct 
-        void SetDefaultPortConfiguration();
+        void setDefaultPortConfiguration();
 };
 
 #endif /*SERIAL_PORT_LINUX_H*/

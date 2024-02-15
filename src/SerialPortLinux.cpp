@@ -11,94 +11,64 @@
 
 #include "SerialPortLinux.hpp"
 
-SerialPortLinux::SerialPortLinux()
-{
-    this->port_desc = -1;
-    this->state     = PortState::STATE_CLOSE;
-}
-
-SerialPortLinux::SerialPortLinux(const std::string& path,const PortConfig& config)
-{
-    this->port_desc = -1;
-    this->state     = PortState::STATE_CLOSE;
-    try{this->Open(path);}
-    catch(const std::exception& e){std::cerr << e.what() << '\n';}
-    // set default config in case of success
-    if(this->GetPortState() ==  PortState::STATE_OPEN)
-    {
-        try
-        {
-            this->Setup(config);
-        }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-            this->Close();
-        }
-    }
-}
 
 SerialPortLinux::~SerialPortLinux()
 {
-    this->Close();
+    closePort();
 }
 
-void SerialPortLinux::Open(const std::string& path)
+void SerialPortLinux::openPort(const std::string& path)
 {
-    std::string dev_path = "/dev/"+ path;
-    this->port_desc = open(dev_path.c_str(),O_RDWR);   
-    if(this->port_desc < 0)
+    std::string dev_path = "/dev/" + path;
+    port_desc = open(dev_path.c_str(),O_RDWR);   
+    if(port_desc < 0)
     {
-        //we have errors
         throw std::runtime_error(std::string("Could not open device on path :") + path);
     }
-    else
+    else{state = PortState::Open;}
+}
+
+void SerialPortLinux::closePort(void)
+{
+    if(state != PortState::Close)
     {
-        this->state = PortState::STATE_OPEN;
+        close(port_desc);
+        state = PortState::Close;
+        port_desc = -1;
     }
 }
 
-void SerialPortLinux::Close(void)
+void SerialPortLinux::setup(const PortConfig &config)
 {
-    if(this->port_desc != -1)
-    {
-        close(this->port_desc);
-        this->state = PortState::STATE_CLOSE;
-        this->port_desc = -1;
-    }else{return;}
+    loadPortConfiguration();
+    setDefaultPortConfiguration();
+    setBaudRate(config.baudrate);
+    setDataBits(config.data_bits);
+    setParity(  config.parity);
+    setStopBits(config.stop_bits);
+    setTimeOut( config.timeout_ms);
+    savePortConfiguration();
 }
 
-void SerialPortLinux::Setup(const PortConfig &config)
+void SerialPortLinux::writeString(const std::string& data)
 {
-    this->LoadPortConfiguration();
-    this->SetDefaultPortConfiguration();
-    this->SetBaudRate(config.baudrate);
-    this->SetDataBits(config.data_bits);
-    this->SetParity(  config.parity);
-    this->SetStopBits(config.stop_bits);
-    this->SetTimeOut( config.timeout_ms);
-    this->SavePortConfiguration();
-}
-
-void SerialPortLinux::WriteString(const std::string &data)
-{
-    int stat = write(this->port_desc, data.c_str(), data.size());
+    int stat = write(port_desc, data.c_str(), data.size());
     if(stat == -1)
     {
         throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);
     }
 }
 
-void SerialPortLinux::WriteBinary(const std::vector<uint8_t>& data)
+void SerialPortLinux::writeBinary(const std::vector<uint8_t>& data)
 {
-    int stat = write(this->port_desc, data.data(), data.size());
+    int stat = write(port_desc, data.data(), data.size());
     if(stat == -1)
     {
         throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);
     }
 }
 
-size_t SerialPortLinux::Read(std::vector<uint8_t>& data, size_t length)
+size_t SerialPortLinux::readBinary(std::vector<uint8_t>& data, size_t length)
 {
     uint8_t* p_buffer    = new uint8_t[length];
     size_t bytes_to_read = length;
@@ -132,28 +102,30 @@ size_t SerialPortLinux::Read(std::vector<uint8_t>& data, size_t length)
     return bytes_read;
 }
 
-void SerialPortLinux::SetParity(const PortParity parity)
+void SerialPortLinux::setParity(const PortParity parity)
 {
     switch(parity)
     {
-        case PortParity::P_NONE:
+        case PortParity::None:
             this->tty.c_cflag &= ~PARENB;
             break;
-        case PortParity::P_EVEN:
+
+        case PortParity::Even:
             this->tty.c_cflag |=  PARENB;
             this->tty.c_cflag &= ~PARODD;
             break;
-        case PortParity::P_ODD:
+
+        case PortParity::Odd:
             this->tty.c_cflag |= PARENB;
             this->tty.c_cflag |= PARODD;
             break;
+
         default:
-            throw std::runtime_error(std::string() +"unsupported parameter type passed to :" + __FUNCTION__);
             break;
     }
 }
 
-void SerialPortLinux::SetBaudRate(const PortBaudRate baudrate)
+void SerialPortLinux::setBaudRate(const PortBaudRate baudrate)
 {
     switch(baudrate)
     {
@@ -177,52 +149,55 @@ void SerialPortLinux::SetBaudRate(const PortBaudRate baudrate)
             cfsetispeed(&(this->tty), B1152000);
             cfsetospeed(&(this->tty), B1152000);
             break;
+        
         default:
-            throw std::runtime_error(std::string() +"unsupported parameter type passed to :" + __FUNCTION__);
             break;
     }
 }
 
-void SerialPortLinux::SetDataBits(const PortDataBits num_of_data_bits)
+void SerialPortLinux::setDataBits(const PortDataBits num_of_data_bits)
 {
     this->tty.c_cflag &= ~CSIZE;
+    
     switch(num_of_data_bits)
     {
-        case PortDataBits::DB_FIVE:
+        case PortDataBits::Five:
             this->tty.c_cflag |= CS5;
             break;
-        case PortDataBits::DB_SIX:
+
+        case PortDataBits::Six:
             this->tty.c_cflag |= CS6;
             break;
-        case PortDataBits::DB_SEVEN:
+        case PortDataBits::Seven:
             this->tty.c_cflag |= CS7;
             break;
-        case PortDataBits::DB_EIGHT:
+        case PortDataBits::Eight:
             this->tty.c_cflag |= CS8;
             break;
+
         default:
-            throw std::runtime_error(std::string() +"unsupported parameter type passed to :" + __FUNCTION__);
             break;    
     }
 }
 
-void SerialPortLinux::SetStopBits(const PortStopBits num_of_stop_bits)
+void SerialPortLinux::setStopBits(const PortStopBits num_of_stop_bits)
 {
     switch(num_of_stop_bits)
     {
-        case PortStopBits::SB_ONE:
+        case PortStopBits::One:
             this->tty.c_cflag &= ~CSTOPB;
             break;
-        case PortStopBits::SB_TWO:
+
+        case PortStopBits::Two:
             this->tty.c_cflag |= CSTOPB;
             break;
+
         default:
-            throw std::runtime_error(std::string() +"unsupported parameter type passed to :" + __FUNCTION__);
             break;
     }
 }
 
-void SerialPortLinux::SetTimeOut(const int timeout_ms)
+void SerialPortLinux::setTimeOut(const int timeout_ms)
 {
     const unsigned char max_timeout = 0xFF;
     this->tty.c_cc[VMIN] = 0;
@@ -234,28 +209,28 @@ void SerialPortLinux::SetTimeOut(const int timeout_ms)
     else
     {
         this->tty.c_cc[VTIME] = timeout;
-    }   
+    }
 }
 
-void SerialPortLinux::LoadPortConfiguration()
-{   
-    if(this->state == PortState::STATE_OPEN)
+void SerialPortLinux::loadPortConfiguration()
+{
+    if(this->state == PortState::Open)
     {
         int stat = tcgetattr(this->port_desc, &(this->tty));
         if(stat != 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
     }
 }
 
-void SerialPortLinux::SavePortConfiguration()
+void SerialPortLinux::savePortConfiguration()
 {
-    if(this->state == PortState::STATE_OPEN)
+    if(this->state == PortState::Open)
     {
         int stat = tcsetattr(this->port_desc, TCSANOW, &(this->tty));
         if(stat != 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
     }
 }
 
-void SerialPortLinux::SetDefaultPortConfiguration()
+void SerialPortLinux::setDefaultPortConfiguration()
 {
     //hardware flow control disabled
     this->tty.c_cflag &= ~CRTSCTS;
