@@ -5,28 +5,20 @@
 * Description        : 
 *******************************************************************************/
 
-#include <iostream>
-#include "SerialDevice.hpp"
-#include <iostream>
-#if defined(PLATFORM_LINUX) && !defined(PLATFORM_WINDOWS)
+#if defined(PLATFORM_LINUX)
 #include <sys/types.h>
 #include <dirent.h>
 #include "SerialPortLinux.hpp"
-static std::vector<SerialPortLinux*> platform_ports;
-#elif defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
+#elif defined(PLATFORM_WINDOWS)
 #include "SerialPortWindows.hpp"
-static std::vector<SerialPortWindows*> platform_ports;
 #else
-static std::vector<SerialPort*> platform_ports;
+#include "SerialPortWindows.hpp"
+//#error "target platform not defined."
 #endif
-
-SerialDevice::SerialDevice()
-{
-    //nothing to create
-}
 
 SerialDevice::~SerialDevice()
 {
+
 }
 
 void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
@@ -34,13 +26,13 @@ void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
     devices.clear();
 
     #if defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
-    wchar_t* dev_path = new wchar_t[256];
+    char* dev_path = new char[256];
 
     for (auto i = 0; i < 255; i++)
     {
         std::string device = "COM" + std::to_string(i);
         std::wstring converted_device =  std::wstring(device.begin(),device.end());
-        DWORD result = QueryDosDevice(converted_device.c_str(),dev_path, 256);
+        DWORD result = QueryDosDevice(device.c_str(),dev_path, 256);
         if (result != 0)
         {
             devices.push_back(device);

@@ -64,7 +64,8 @@ class SerialPort
     public:
         /// @brief open port
         /// @param path string with path to device
-        virtual void openPort(const std::string& path) = 0;
+        /// @retval actual port state
+        virtual PortState openPort(const std::string& path)  = 0;
         /// @brief close actual port if opened
         virtual void closePort() = 0;
         /// @brief setup port with new configuration
@@ -93,8 +94,9 @@ class SerialPort
 class SerialDevice
 {
     public:
-        SerialDevice();
-        ~SerialDevice();
+        SerialDevice(){};
+        ~SerialDevice(){};
+        
         /// @brief request for all available serial port devices in system
         /// @param devices vector into which ports will be written (if exist)
         void GetListOfAvailableDevices(std::vector<std::string>& devices);
