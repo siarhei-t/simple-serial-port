@@ -10,12 +10,12 @@
 #include <windows.h>
 #include "SerialDevice.hpp"
 
-class SerialPortWindows : public SerialPort
+class SerialPortWindows : public SerialPort 
 {
     public:
     
         SerialPortWindows(){};
-        ~SerialPortWindows(){closePort();};
+        ~SerialPortWindows(){closePort();}
         /// @brief open port
         /// @param path string with path to device
         PortState openPort(const std::string& path) override;
@@ -40,7 +40,7 @@ class SerialPortWindows : public SerialPort
         // \brief opened port file descriptor
         HANDLE port_desc = INVALID_HANDLE_VALUE;
         // \brief struct with port configuration
-        DCB tty;
+        DCB tty = {};
         /// @brief setup parity bits in tty struct
         /// @param parity expected parity mode
         void setParity(const PortParity parity);

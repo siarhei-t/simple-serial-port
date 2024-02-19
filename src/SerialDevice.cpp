@@ -16,10 +16,6 @@
 //#error "target platform not defined."
 #endif
 
-SerialDevice::~SerialDevice()
-{
-
-}
 
 void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
 {
