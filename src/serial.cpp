@@ -10,12 +10,9 @@
 #include <dirent.h>
 #include "SerialPortLinux.hpp"
 #elif defined(PLATFORM_WINDOWS)
-#include "SerialPortWindows.hpp"
-#else
-#include "SerialPortWindows.hpp"
-//#error "target platform not defined."
+#include <windows.h>
 #endif
-
+#include "../inc/serial.hpp"
 
 void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
 {

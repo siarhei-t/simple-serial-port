@@ -8,35 +8,37 @@
 #define SERIAL_PORT_WINDOWS_H
 
 #include <windows.h>
-#include "SerialDevice.hpp"
+#include "../inc/serial.hpp"
 
-class SerialPortWindows : public SerialPort 
+class SerialPortWindows
 {
     public:
     
-        SerialPortWindows(){};
+        SerialPortWindows() = default;
         ~SerialPortWindows(){closePort();}
         /// @brief open port
         /// @param path string with path to device
-        PortState openPort(const std::string& path) override;
+        PortState openPort(const std::string& path);
         /// @brief close actual port if opened
-        void closePort() override;
+        void closePort();
         /// @brief setup port with new configuration
         /// @param config struct with port configuration
-        void setup(const PortConfig& config) override;
+        void setup(const PortConfig& config);
         /// @brief write string data to actual port
         /// @param data string object with data to send
-        void writeString(const std::string& data) override;
+        void writeString(const std::string& data);
         /// @brief write raw data to actual port
         /// @param data string object with data to send
-        void writeBinary(const std::vector<uint8_t>& data) override;
+        void writeBinary(const std::vector<uint8_t>& data);
         /// @brief read raw data from port 
         /// @param data reference to vector with buffer for data
         /// @param length how many bytes we expect to read during timeout
         /// @returns how many bytes we read actually
-        size_t readBinary(std::vector<uint8_t>& data, size_t length) override;
+        size_t readBinary(std::vector<uint8_t>& data, size_t length);
     
     private:
+        /// @brief actual port state
+        PortState state = PortState::Close;
         // \brief opened port file descriptor
         HANDLE port_desc = INVALID_HANDLE_VALUE;
         // \brief struct with port configuration

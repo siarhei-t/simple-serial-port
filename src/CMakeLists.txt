@@ -13,7 +13,7 @@ if(TARGET_WINDOWS)
 message("target platform selected as Windows.")
 set(TARGET_PLATFORM PLATFORM_WINDOWS)
 set(PLATFORM_SOURCES
-        SerialPortWindows.cpp
+        sp_windows.cpp
 )
 endif()
 
@@ -21,12 +21,12 @@ if(TARGET_LINUX)
 message("target platform selected as Linux.")
 set(TARGET_PLATFORM PLATFORM_LINUX)
 set(PLATFORM_SOURCES
-        SerialPortLinux.cpp
+        sp_linux.cpp
 )
 endif()
 
 set(COMMON_SOURCES
-        SerialDevice.cpp
+        serial.cpp
 )
 message("")
 message("*************************************")
@@ -39,5 +39,6 @@ add_library (${PROJECT_NAME} STATIC ${COMMON_SOURCES} ${PLATFORM_SOURCES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${TARGET_PLATFORM}=1)
 target_include_directories(${PROJECT_NAME} PRIVATE
         ../inc
+        ../inc/platform
         )
 

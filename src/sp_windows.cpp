@@ -9,16 +9,14 @@
 #include <system_error>
 #include <stdexcept>
 
-#include "SerialPortWindows.hpp"
+#include "../inc/platform/sp_windows.hpp"
 
 PortState SerialPortWindows::openPort(const std::string& path)
 {
-    std::wstring converted_path =  std::wstring(path.begin(),path.end());
-    LPCWSTR file_name = converted_path.c_str();
+    //std::wstring converted_path =  std::wstring(path.begin(),path.end());
     port_desc = CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
     if(this->port_desc == INVALID_HANDLE_VALUE){state = PortState::Close;}
     else{state = PortState::Open;}
-    
     return state;
 }
 
@@ -75,26 +73,14 @@ size_t SerialPortWindows::readBinary(std::vector<uint8_t>& data, size_t length)
     DWORD bytes_read     = 0;
     
     data.resize(length);
-
     while(bytes_to_read != 0)
     {
         WINBOOL n = ReadFile(port_desc, data.data(),length, &bytes_read, NULL);
-        if(n == 0) // error with port access
-        {
-            ///delete[] p_buffer;
-            throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);
-        }
-        else if((bytes_read > 0) && (bytes_read <= bytes_to_read)) //reading 
-        {
-            bytes_to_read = bytes_to_read - bytes_read;
-        }
-        else if(bytes_read == 0) //nothing to read
-        {
-            break;
-        }  
+        if(n == 0) {throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);}
+        else if((bytes_read > 0) && (bytes_read <= bytes_to_read)){bytes_to_read = bytes_to_read - bytes_read;}//reading
+        else if(bytes_read == 0) {break;}//nothing to read  
     }    
     data.resize(bytes_read);
-
     FlushFileBuffers(port_desc);
     return bytes_read;
 }
