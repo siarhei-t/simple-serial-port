@@ -5,20 +5,28 @@
 * Description        : 
 *******************************************************************************/
 
+#include "../inc/device.hpp"
 #if defined(PLATFORM_LINUX)
 #include <sys/types.h>
 #include <dirent.h>
-#include "SerialPortLinux.hpp"
 #elif defined(PLATFORM_WINDOWS)
 #include <windows.h>
+#include "device.hpp"
+#else
+#error "target platform not defined."
 #endif
-#include "../inc/serial.hpp"
 
-void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
+SerialPort::SerialPort(std::string path, sp::PortConfig config) : path(path)
 {
-    devices.clear();
+    if(port.openPort(path) == sp::PortState::Open)
+    {
+        port.setup(config);
+    }
+}
 
-    #if defined(PLATFORM_WINDOWS) && !defined(PLATFORM_LINUX)
+void SerialDevice::updateAvailableDevices()
+{
+    #if defined(PLATFORM_WINDOWS)
     char* dev_path = new char[256];
 
     for (auto i = 0; i < 255; i++)
@@ -32,9 +40,7 @@ void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
         }else{continue;}
     }
     delete[] dev_path;
-    #endif
-
-    #if defined(PLATFORM_LINUX) && !defined(PLATFORM_WINDOWS) 
+    #elif defined(PLATFORM_LINUX) 
     const char path[] = {"/dev/"};
     static const std::string dev_template[] = {"ttyUSB","ttyACM"};
     dirent *dp;
@@ -57,20 +63,3 @@ void SerialDevice::GetListOfAvailableDevices(std::vector<std::string> &devices)
     (void)closedir(dirp);
     #endif
 }
-
-void SerialDevice::GetListOfCreatedDevices(std::vector<std::string> &devices)
-{
-    devices.clear();
-    for(auto i = 0; i < this->devices.size(); i++)
-    {
-        devices.push_back(this->devices[i]);
-    }
-}
-
-SerialPort* SerialDevice::CreatePortInstance(const std::string path,const PortConfig& config)
-{
-    SerialPort* created_port = nullptr;
-    
-    return created_port;
-}
-

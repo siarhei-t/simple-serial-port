@@ -8,7 +8,10 @@
 #define SERIAL_PORT_WINDOWS_H
 
 #include <windows.h>
-#include "../inc/serial.hpp"
+#include <cstdint>
+#include <string>
+#include <vector>
+#include "../serial.hpp"
 
 class SerialPortWindows
 {
@@ -18,12 +21,12 @@ class SerialPortWindows
         ~SerialPortWindows(){closePort();}
         /// @brief open port
         /// @param path string with path to device
-        PortState openPort(const std::string& path);
+        sp::PortState openPort(const std::string& path);
         /// @brief close actual port if opened
         void closePort();
         /// @brief setup port with new configuration
         /// @param config struct with port configuration
-        void setup(const PortConfig& config);
+        void setup(const sp::PortConfig& config);
         /// @brief write string data to actual port
         /// @param data string object with data to send
         void writeString(const std::string& data);
@@ -35,26 +38,31 @@ class SerialPortWindows
         /// @param length how many bytes we expect to read during timeout
         /// @returns how many bytes we read actually
         size_t readBinary(std::vector<uint8_t>& data, size_t length);
+        /// @brief request for port configuration
+        /// @return struct with configuration
+        sp::PortConfig getConfig() const{return config;};
     
     private:
         /// @brief actual port state
-        PortState state = PortState::Close;
-        // \brief opened port file descriptor
+        sp::PortState state = sp::PortState::Close;
+        /// @brief opened port file descriptor
         HANDLE port_desc = INVALID_HANDLE_VALUE;
-        // \brief struct with port configuration
+        /// @brief actual port config
+        sp::PortConfig config;
+        /// @brief struct with port configuration
         DCB tty = {};
         /// @brief setup parity bits in tty struct
         /// @param parity expected parity mode
-        void setParity(const PortParity parity);
+        void setParity(const sp::PortParity parity);
         /// @brief setup baudrate in tty struct
         /// @param baudrate expected port baudrate
-        void setBaudRate(const PortBaudRate baudrate);
+        void setBaudRate(const sp::PortBaudRate baudrate);
         /// @brief setup data bits in tty struct
         /// @param num_of_data_bits expected number of data bits in frame
-        void setDataBits(const PortDataBits num_of_data_bits);
+        void setDataBits(const sp::PortDataBits num_of_data_bits);
         /// @brief setup stop bits in tty struct
         /// @param num_of_stop_bits expected number of stop bits in frame
-        void setStopBits(const PortStopBits num_of_stop_bits);
+        void setStopBits(const sp::PortStopBits num_of_stop_bits);
         /// @brief setup timeout in tty struct
         /// @param timeout_ms expected timeout i ms for data read
         void setTimeOut(const int timeout_ms);

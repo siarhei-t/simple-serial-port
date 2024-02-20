@@ -26,7 +26,7 @@ set(PLATFORM_SOURCES
 endif()
 
 set(COMMON_SOURCES
-        serial.cpp
+        device.cpp
 )
 message("")
 message("*************************************")
