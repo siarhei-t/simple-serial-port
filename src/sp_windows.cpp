@@ -5,10 +5,8 @@
 * Description        :
 *******************************************************************************/
 
-#include <iostream>
-#include <system_error>
 #include <stdexcept>
-
+#include <system_error>
 #include "../inc/platform/sp_windows.hpp"
 
 sp::PortState SerialPortWindows::openPort(const std::string& path)
@@ -73,16 +71,19 @@ size_t SerialPortWindows::readBinary(std::vector<uint8_t>& data, size_t length)
     size_t bytes_to_read = length;
     DWORD bytes_read     = 0;
     
-    data.resize(length);
-    while(bytes_to_read != 0)
+    if(state == sp::PortState::Open)
     {
-        WINBOOL n = ReadFile(port_desc, data.data(),length, &bytes_read, NULL);
-        if(n == 0) {throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);}
-        else if((bytes_read > 0) && (bytes_read <= bytes_to_read)){bytes_to_read = bytes_to_read - bytes_read;}//reading
-        else if(bytes_read == 0) {break;}//nothing to read  
-    }    
-    data.resize(bytes_read);
-    FlushFileBuffers(port_desc);
+        data.resize(length);
+        while(bytes_to_read != 0)
+        {
+            WINBOOL n = ReadFile(port_desc, data.data(),length, &bytes_read, NULL);
+            if(n == 0) {throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);}
+            else if((bytes_read > 0) && (bytes_read <= bytes_to_read)){bytes_to_read = bytes_to_read - bytes_read;}//reading
+            else if(bytes_read == 0) {break;}//nothing to read  
+        }    
+        data.resize(bytes_read);
+        FlushFileBuffers(port_desc);
+    }
     return bytes_read;
 }
 

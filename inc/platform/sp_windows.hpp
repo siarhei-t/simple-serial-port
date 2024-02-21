@@ -1,22 +1,23 @@
-/******************************************************************************
-* File Name          : SerialPortWindows.hpp
-* Author             : 
-* Version            : v 1.0
-* Description        : header for SerialPortWindows.cpp
-*******************************************************************************/
-#ifndef SERIAL_PORT_WINDOWS_H
-#define SERIAL_PORT_WINDOWS_H
+/**
+ * @file sp_windows.hpp
+ *
+ * @brief 
+ *
+ * @author Siarhei Tatarchanka
+ *
+ */
+#ifndef SP_WINDOWS_H
+#define SP_WINDOWS_H
 
 #include <windows.h>
-#include <cstdint>
 #include <string>
 #include <vector>
+#include <cstdint>
 #include "../serial.hpp"
 
 class SerialPortWindows
 {
     public:
-    
         SerialPortWindows() = default;
         ~SerialPortWindows(){closePort();}
         /// @brief open port
@@ -72,4 +73,4 @@ class SerialPortWindows
         void savePortConfiguration();
 };
 
-#endif /*SERIAL_PORT_WINDOWS_H*/
+#endif //SP_WINDOWS_H
