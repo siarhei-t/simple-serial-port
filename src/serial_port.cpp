@@ -5,13 +5,12 @@
 * Description        : 
 *******************************************************************************/
 
-#include "../inc/device.hpp"
+#include "../inc/serial_port.hpp"
 #if defined(PLATFORM_LINUX)
 #include <sys/types.h>
 #include <dirent.h>
 #elif defined(PLATFORM_WINDOWS)
 #include <windows.h>
-#include "device.hpp"
 #else
 #error "target platform not defined."
 #endif

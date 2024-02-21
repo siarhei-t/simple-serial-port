@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include "../serial.hpp"
+#include "../types.hpp"
 
 class SerialPortWindows
 {

@@ -1,5 +1,5 @@
 /**
- * @file device.hpp
+ * @file serial_port.hpp
  *
  * @brief 
  *
@@ -7,15 +7,14 @@
  *
  */
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef SERIAL_PORT_H
+#define SERIAL_PORT_H
 
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <memory>
 
-#include "../inc/serial.hpp"
+#include "../inc/types.hpp"
 #if defined(PLATFORM_LINUX)
 #include "../inc/platform/sp_linux.hpp"
 #elif defined(PLATFORM_WINDOWS)
@@ -56,4 +55,4 @@ class SerialDevice
         std::vector<std::string> devices;
 };
 
-#endif //DEVICE_H
+#endif //SERIAL_PORT_H

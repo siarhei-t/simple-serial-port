@@ -1,5 +1,5 @@
 /**
- * @file serial.hpp
+ * @file types.hpp
  *
  * @brief 
  *
@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef SERIAL_H
-#define SERIAL_H
+#ifndef TYPES_H
+#define TYPES_H
 
 //debug purpose, select one 
 //#define PLATFORM_WINDOWS 1
@@ -62,4 +62,4 @@ namespace sp
     };
 }
 
-#endif //SERIAL_H
+#endif //TYPES_H

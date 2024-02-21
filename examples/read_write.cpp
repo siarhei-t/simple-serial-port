@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "serial.hpp"
+#include "serial_port.hpp"
 
 int main(void)
 {
