@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "../inc/sp_types.hpp"
+#include "../inc/sp_error.hpp"
 #if defined(PLATFORM_LINUX)
 #include "../inc/platform/sp_linux.hpp"
 #elif defined(PLATFORM_WINDOWS)

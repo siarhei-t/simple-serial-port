@@ -33,6 +33,7 @@ endif()
 
 set(COMMON_SOURCES
         serial_port.cpp
+        sp_error.cpp
 )
 set(COMMON_HEADERS
         ../inc/sp_types.hpp

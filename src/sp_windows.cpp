@@ -7,9 +7,8 @@
  *
  */
 
-#include <stdexcept>
-#include <system_error>
 #include "../inc/platform/sp_windows.hpp"
+#include "../inc/sp_error.hpp"
 
 sp::PortState SerialPortWindows::openPort(const std::string& path)
 {
@@ -50,7 +49,7 @@ void SerialPortWindows::writeString(const std::string &data)
         WINBOOL stat = WriteFile(port_desc, data.c_str(),data.size(),&bytes_written,NULL);
         if(stat == 0)
         {
-            throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);
+            throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_write));
         }
     }
 }
@@ -63,7 +62,7 @@ void SerialPortWindows::writeBinary(const std::vector<uint8_t>& data)
         WINBOOL stat = WriteFile(port_desc, data.data(),data.size(),&bytes_written,NULL);
         if(stat == 0)
         {
-            throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);
+            throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_write));
         }   
     }
 }
@@ -79,7 +78,7 @@ size_t SerialPortWindows::readBinary(std::vector<uint8_t>& data, size_t length)
         while(bytes_to_read != 0)
         {
             WINBOOL n = ReadFile(port_desc, data.data(),length, &bytes_read, NULL);
-            if(n == 0) {throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);}
+            if(n == 0) {throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_read));}
             else if((bytes_read > 0) && (bytes_read <= bytes_to_read)){bytes_to_read = bytes_to_read - bytes_read;}//reading
             else if(bytes_read == 0) {break;}//nothing to read  
         }    
@@ -187,7 +186,7 @@ void SerialPortWindows::setTimeOut(const int timeout_ms)
     WINBOOL stat = GetCommTimeouts(port_desc, &timeouts);
     if(stat == 0)
     {
-        throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);
+        throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_load_cfg));
     }
     timeouts.ReadTotalTimeoutConstant    = timeout_ms;
     timeouts.WriteTotalTimeoutConstant   = timeout_ms;
@@ -197,7 +196,7 @@ void SerialPortWindows::setTimeOut(const int timeout_ms)
     stat = SetCommTimeouts(port_desc, &timeouts);
     if(stat == 0)
     {
-        throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);
+        throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_save_cfg));
     }
 }
 
@@ -206,7 +205,7 @@ void SerialPortWindows::loadPortConfiguration()
     if(state == sp::PortState::Open)
     {
         WINBOOL stat = GetCommState(port_desc, &tty);
-        if(stat == 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
+        if(stat == 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_load_cfg));}
     }
 }
 
@@ -215,6 +214,6 @@ void SerialPortWindows::savePortConfiguration()
     if(this->state == sp::PortState::Open)
     {
         WINBOOL stat = SetCommState(port_desc, &tty);
-        if(stat == 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
+        if(stat == 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_save_cfg));}
     }
 }

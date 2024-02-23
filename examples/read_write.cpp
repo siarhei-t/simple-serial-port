@@ -6,7 +6,6 @@
 *******************************************************************************/
 
 #include <iostream>
-
 #include "serial_port.hpp"
 
 int main(void)
