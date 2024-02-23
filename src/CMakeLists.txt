@@ -35,7 +35,8 @@ set(COMMON_SOURCES
         serial_port.cpp
 )
 set(COMMON_HEADERS
-        ../inc/types.hpp
+        ../inc/sp_types.hpp
+        ../inc/sp_error.hpp
         ../inc/serial_port.hpp
 )
 

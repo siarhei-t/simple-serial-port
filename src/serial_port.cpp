@@ -1,9 +1,11 @@
-/******************************************************************************
-* File Name          : SerialDevice.cpp
-* Author             : Siarhei Tatarchanka
-* Version            : v 1.0
-* Description        : 
-*******************************************************************************/
+/**
+ * @file serial_port.cpp
+ *
+ * @brief 
+ *
+ * @author Siarhei Tatarchanka
+ *
+ */
 
 #include "../inc/serial_port.hpp"
 #if defined(PLATFORM_LINUX)

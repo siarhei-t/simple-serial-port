@@ -1,9 +1,11 @@
-/******************************************************************************
-* File Name          : SerialPort.cpp
-* Author             :
-* Version            : v 1.0
-* Description        :
-*******************************************************************************/
+/**
+ * @file sp_windows.cpp
+ *
+ * @brief 
+ *
+ * @author Siarhei Tatarchanka
+ *
+ */
 
 #include <stdexcept>
 #include <system_error>

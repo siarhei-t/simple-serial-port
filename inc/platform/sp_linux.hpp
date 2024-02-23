@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include "../types.hpp"
+#include "../sp_types.hpp"
 
 class SerialPortLinux
 {

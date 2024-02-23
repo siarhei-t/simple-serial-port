@@ -1,5 +1,5 @@
 /**
- * @file types.hpp
+ * @file sp_types.hpp
  *
  * @brief 
  *
@@ -7,11 +7,11 @@
  *
  */
 
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef SP_TYPES_H
+#define SP_TYPES_H
 
 //debug purpose, select one 
-//#define PLATFORM_WINDOWS 1
+#define PLATFORM_WINDOWS 1
 //#define PLATFORM_LINUX   1
 
 namespace sp
@@ -62,4 +62,4 @@ namespace sp
     };
 }
 
-#endif //TYPES_H
+#endif //SP_TYPES_H

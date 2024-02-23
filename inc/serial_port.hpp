@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-#include "../inc/types.hpp"
+#include "../inc/sp_types.hpp"
 #if defined(PLATFORM_LINUX)
 #include "../inc/platform/sp_linux.hpp"
 #elif defined(PLATFORM_WINDOWS)
