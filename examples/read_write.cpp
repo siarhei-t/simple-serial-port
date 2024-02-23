@@ -18,6 +18,5 @@ int main(void)
     {
         std::cout<<" available device : "<<actual_list[i]<<" | index : "<<i<<"\n";
     }
-
     return 0;
 }

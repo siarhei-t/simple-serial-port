@@ -7,9 +7,8 @@
  *
  */
 
-#include <stdexcept>
-#include <system_error>
 #include "../inc/platform/sp_linux.hpp"
+#include "../inc/sp_error.hpp"
 
 sp::PortState SerialPortLinux::openPort(const std::string& path)
 {
@@ -49,7 +48,7 @@ void SerialPortLinux::writeString(const std::string& data)
         int stat = write(port_desc, data.c_str(), data.size());
         if(stat == -1)
         {
-            throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);
+            throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_write));
         }
     }
 }
@@ -61,7 +60,7 @@ void SerialPortLinux::writeBinary(const std::vector<uint8_t>& data)
         int stat = write(port_desc, data.data(), data.size());
         if(stat == -1)
         {
-            throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);
+            throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_write));
         }
     }
 }
@@ -77,7 +76,7 @@ size_t SerialPortLinux::readBinary(std::vector<uint8_t>& data, size_t length)
         while(bytes_to_read != 0)
         {
             size_t n = read(this->port_desc, data.data(), bytes_to_read);
-            if(n < 0){throw std::runtime_error(std::string() +"error with port access in function :" + __FUNCTION__);}
+            if(n < 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_read));}
             else if((n > 0) && (n <= bytes_to_read))//reading 
             {
                 bytes_to_read = bytes_to_read - n;
@@ -199,7 +198,7 @@ void SerialPortLinux::setTimeOut(const int timeout_ms)
     int timeout = timeout_ms/100;
     if(timeout > max_timeout)
     {
-        throw std::runtime_error(std::string() +"unsupported parameter type passed to :" + __FUNCTION__);
+        throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_save_cfg));
     }
     else
     {
@@ -212,7 +211,7 @@ void SerialPortLinux::loadPortConfiguration()
     if(state == sp::PortState::Open)
     {
         int stat = tcgetattr(this->port_desc, &(this->tty));
-        if(stat != 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
+        if(stat != 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_load_cfg));}
     }
 }
 
@@ -221,7 +220,7 @@ void SerialPortLinux::savePortConfiguration()
     if(state == sp::PortState::Open)
     {
         int stat = tcsetattr(this->port_desc, TCSANOW, &(this->tty));
-        if(stat != 0){throw std::runtime_error(std::string() +"internal error in :" + __FUNCTION__);}
+        if(stat != 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_save_cfg));}
     }
 }
 
