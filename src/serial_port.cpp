@@ -28,7 +28,7 @@ SerialPort::SerialPort(std::string path, sp::PortConfig config) : path(path)
 void SerialDevice::updateAvailableDevices()
 {
     #if defined(PLATFORM_WINDOWS)
-    char* dev_path = new char[256];
+    char dev_path[256];
 
     for (auto i = 0; i < 255; i++)
     {
@@ -40,7 +40,6 @@ void SerialDevice::updateAvailableDevices()
             devices.push_back(device);
         }else{continue;}
     }
-    delete[] dev_path;
     #elif defined(PLATFORM_LINUX) 
     const char path[] = {"/dev/"};
     static const std::string dev_template[] = {"ttyUSB","ttyACM"};
