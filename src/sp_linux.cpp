@@ -53,7 +53,7 @@ void SerialPortLinux::writeString(const std::string& data)
     }
 }
 
-void SerialPortLinux::writeBinary(const std::vector<uint8_t>& data)
+void SerialPortLinux::writeBinary(const std::vector<std::uint8_t>& data)
 {
     if(state == sp::PortState::Open)
     {
@@ -65,7 +65,7 @@ void SerialPortLinux::writeBinary(const std::vector<uint8_t>& data)
     }
 }
 
-size_t SerialPortLinux::readBinary(std::vector<uint8_t>& data, size_t length)
+size_t SerialPortLinux::readBinary(std::vector<std::uint8_t>& data, size_t length)
 {
     size_t bytes_to_read = length;
     size_t bytes_read    = 0;

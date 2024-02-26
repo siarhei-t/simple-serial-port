@@ -36,15 +36,19 @@ class SerialPortLinux
         void writeString(const std::string& data);
         /// @brief write raw data to actual port
         /// @param data string object with data to send
-        void writeBinary(const std::vector<uint8_t>& data);
+        void writeBinary(const std::vector<std::uint8_t>& data);
         /// @brief read raw data from port 
         /// @param data reference to vector with buffer for data
         /// @param length how many bytes we expect to read during timeout
         /// @returns how many bytes we read actually
-        size_t readBinary(std::vector<uint8_t>& data, size_t length);
+        size_t readBinary(std::vector<std::uint8_t>& data, size_t length);
         /// @brief request for port configuration
         /// @return struct with configuration
-        sp::PortConfig getConfig() const{return config;};
+        sp::PortConfig getConfig() const {return config;};
+        /// @brief request for port state
+        /// @return actual port state
+        sp::PortState getState() const {return state;};
+        
     
     private:
         /// @brief actual port state

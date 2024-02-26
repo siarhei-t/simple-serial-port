@@ -54,7 +54,7 @@ void SerialPortWindows::writeString(const std::string &data)
     }
 }
 
-void SerialPortWindows::writeBinary(const std::vector<uint8_t>& data)
+void SerialPortWindows::writeBinary(const std::vector<std::uint8_t>& data)
 {
     if(state == sp::PortState::Open)
     {
@@ -67,7 +67,7 @@ void SerialPortWindows::writeBinary(const std::vector<uint8_t>& data)
     }
 }
 
-size_t SerialPortWindows::readBinary(std::vector<uint8_t>& data, size_t length)
+size_t SerialPortWindows::readBinary(std::vector<std::uint8_t>& data, size_t length)
 {
     size_t bytes_to_read = length;
     DWORD bytes_read     = 0;

@@ -33,7 +33,8 @@ class SerialPort
         #elif defined(PLATFORM_WINDOWS)
         SerialPortWindows port;
         #endif
-
+        std::string getPath() const {return path;};
+    
     private:
         std::string path;
 };
