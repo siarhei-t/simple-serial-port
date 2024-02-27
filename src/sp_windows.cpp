@@ -12,8 +12,12 @@
 
 sp::PortState SerialPortWindows::openPort(const std::string& path)
 {
-    //std::wstring converted_path =  std::wstring(path.begin(),path.end());
+    #if defined(UNICODE)
+    std::wstring converted_path =  std::wstring(path.begin(),path.end());
+    port_desc = CreateFile(converted_path.c_str(), GENERIC_READ | GENERIC_WRITE,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
+    #else
     port_desc = CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
+    #endif
     if(this->port_desc == INVALID_HANDLE_VALUE){state = sp::PortState::Close;}
     else{state = sp::PortState::Open;}
     return state;

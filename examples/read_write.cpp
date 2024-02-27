@@ -32,17 +32,18 @@ int main(void)
                 std::cout<<"port on path " <<test.getPath()<<" opened succesfully." <<"\n";
                 std::string data_to_send = "This is a test string.";
                 std::vector<std::uint8_t> data_to_read;
-                //in case of TX/RX pins shorted test string should return in read function
+                //in case of shorted TX/RX pins test string should return in read function
                 std::cout<<"DATA SENT :"<<data_to_send<<"\n"<<"\n";
                 test.port.writeString(data_to_send);
                 auto bytes_read = test.port.readBinary(data_to_read,data_to_send.size());
                 std::cout<<"BYTES READ :"<<bytes_read<<"\n";
                 std::string received_data(data_to_read.begin(),data_to_read.end());
                 std::cout<<"DATA READ :"<<received_data<<"\n"<<"\n";
+                test.port.closePort();
             }
             else
             {
-                std::cout<<" failed with port opening. Do you have read/write permisisons?" <<"\n";
+                std::cout<<" failed with port opening, do you have read/write permisisons?" <<"\n";
             }
         }
         else
