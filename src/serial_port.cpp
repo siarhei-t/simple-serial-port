@@ -27,6 +27,8 @@ SerialPort::SerialPort(std::string path, sp::PortConfig config) : path(path)
 
 void SerialDevice::updateAvailableDevices()
 {
+    devices.clear();
+
     #if defined(PLATFORM_WINDOWS)
     
     #if defined(UNICODE)
