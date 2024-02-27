@@ -58,7 +58,7 @@ namespace sp
         PortDataBits data_bits  = PortDataBits::Eight;
         PortParity   parity     = PortParity::None;
         PortStopBits stop_bits  = PortStopBits::One;
-        int          timeout_ms = 0;
+        int          timeout_ms = 1000;
     };
 }
 
