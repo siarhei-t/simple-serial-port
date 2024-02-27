@@ -22,12 +22,12 @@ class SerialPortWindows
         ~SerialPortWindows(){closePort();}
         /// @brief open port
         /// @param path string with path to device
-        sp::PortState openPort(const std::string& path);
+        void openPort(const std::string& path);
         /// @brief close actual port if opened
         void closePort();
         /// @brief setup port with new configuration
         /// @param config struct with port configuration
-        void setup(const sp::PortConfig& config);
+        void setupPort(const sp::PortConfig& config);
         /// @brief write string data to actual port
         /// @param data string object with data to send
         void writeString(const std::string& data);
@@ -39,20 +39,10 @@ class SerialPortWindows
         /// @param length how many bytes we expect to read during timeout
         /// @returns how many bytes we read actually
         size_t readBinary(std::vector<std::uint8_t>& data, size_t length);
-        /// @brief request for port configuration
-        /// @return struct with configuration
-        sp::PortConfig getConfig() const{return config;};
-        /// @brief request for port state
-        /// @return actual port state
-        sp::PortState getState() const {return state;};
     
     private:
-        /// @brief actual port state
-        sp::PortState state = sp::PortState::Close;
         /// @brief opened port file descriptor
         HANDLE port_desc = INVALID_HANDLE_VALUE;
-        /// @brief actual port config
-        sp::PortConfig config;
         /// @brief struct with port configuration
         DCB tty = {};
         /// @brief setup parity bits in tty struct

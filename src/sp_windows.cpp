@@ -10,7 +10,7 @@
 #include "../inc/platform/sp_windows.hpp"
 #include "../inc/sp_error.hpp"
 
-sp::PortState SerialPortWindows::openPort(const std::string& path)
+void SerialPortWindows::openPort(const std::string& path)
 {
     #if defined(UNICODE)
     std::wstring converted_path =  std::wstring(path.begin(),path.end());
@@ -18,22 +18,16 @@ sp::PortState SerialPortWindows::openPort(const std::string& path)
     #else
     port_desc = CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
     #endif
-    if(this->port_desc == INVALID_HANDLE_VALUE){state = sp::PortState::Close;}
-    else{state = sp::PortState::Open;}
-    return state;
+    if(port_desc == INVALID_HANDLE_VALUE){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_open));}
 }
 
 void SerialPortWindows::closePort(void)
 {
-    if(state != sp::PortState::Close)
-    {
-        CloseHandle(port_desc);
-        state = sp::PortState::Close;
-        port_desc = INVALID_HANDLE_VALUE;
-    }
+    CloseHandle(port_desc);
+    port_desc = INVALID_HANDLE_VALUE;
 }
 
-void SerialPortWindows::setup(const sp::PortConfig &config)
+void SerialPortWindows::setupPort(const sp::PortConfig &config)
 {
     loadPortConfiguration();
     setBaudRate(config.baudrate);
@@ -42,53 +36,42 @@ void SerialPortWindows::setup(const sp::PortConfig &config)
     setStopBits(config.stop_bits);
     savePortConfiguration();
     setTimeOut( config.timeout_ms);
-    this->config = config;
 }
 
 void SerialPortWindows::writeString(const std::string &data)
 {
-    if(state == sp::PortState::Open)
+    DWORD bytes_written;
+    WINBOOL stat = WriteFile(port_desc, data.c_str(),data.size(),&bytes_written,NULL);
+    if(stat == 0)
     {
-        DWORD bytes_written;
-        WINBOOL stat = WriteFile(port_desc, data.c_str(),data.size(),&bytes_written,NULL);
-        if(stat == 0)
-        {
-            throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_write));
-        }
+        throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_write));
     }
 }
 
 void SerialPortWindows::writeBinary(const std::vector<std::uint8_t>& data)
 {
-    if(state == sp::PortState::Open)
+    DWORD bytes_written;
+    WINBOOL stat = WriteFile(port_desc, data.data(),data.size(),&bytes_written,NULL);
+    if(stat == 0)
     {
-        DWORD bytes_written;
-        WINBOOL stat = WriteFile(port_desc, data.data(),data.size(),&bytes_written,NULL);
-        if(stat == 0)
-        {
-            throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_write));
-        }   
-    }
+        throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_write));
+    }   
 }
 
 size_t SerialPortWindows::readBinary(std::vector<std::uint8_t>& data, size_t length)
 {
     size_t bytes_to_read = length;
-    DWORD bytes_read     = 0;
-    
-    if(state == sp::PortState::Open)
+    DWORD bytes_read     = 0;    
+    data.resize(length);
+    while(bytes_to_read != 0)
     {
-        data.resize(length);
-        while(bytes_to_read != 0)
-        {
-            WINBOOL n = ReadFile(port_desc, data.data(),length, &bytes_read, NULL);
-            if(n == 0) {throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_read));}
-            else if((bytes_read > 0) && (bytes_read <= bytes_to_read)){bytes_to_read = bytes_to_read - bytes_read;}//reading
-            else if(bytes_read == 0) {break;}//nothing to read  
-        }    
-        data.resize(bytes_read);
-        FlushFileBuffers(port_desc);
-    }
+        WINBOOL n = ReadFile(port_desc, data.data(),length, &bytes_read, NULL);
+        if(n == 0) {throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_read));}
+        else if((bytes_read > 0) && (bytes_read <= bytes_to_read)){bytes_to_read = bytes_to_read - bytes_read;}//reading
+        else if(bytes_read == 0) {break;}//nothing to read  
+    }    
+    data.resize(bytes_read);
+    FlushFileBuffers(port_desc);
     return bytes_read;
 }
 
@@ -206,18 +189,12 @@ void SerialPortWindows::setTimeOut(const int timeout_ms)
 
 void SerialPortWindows::loadPortConfiguration()
 {   
-    if(state == sp::PortState::Open)
-    {
-        WINBOOL stat = GetCommState(port_desc, &tty);
-        if(stat == 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_load_cfg));}
-    }
+    WINBOOL stat = GetCommState(port_desc, &tty);
+    if(stat == 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_load_cfg));}
 }
 
 void SerialPortWindows::savePortConfiguration()
 {
-    if(this->state == sp::PortState::Open)
-    {
-        WINBOOL stat = SetCommState(port_desc, &tty);
-        if(stat == 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_save_cfg));}
-    }
+    WINBOOL stat = SetCommState(port_desc, &tty);
+    if(stat == 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_save_cfg));}
 }

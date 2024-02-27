@@ -27,16 +27,45 @@
 class SerialPort
 {
     public:
-        SerialPort(std::string path, sp::PortConfig config);
+        /// @brief default coustructor
+        SerialPort() = default;
+        /// @brief constructor that will open port
+        /// @param name port name to open 
+        SerialPort(std::string name);
+        /// @brief constructor that will open port and configure it 
+        /// @param name port name to open
+        /// @param config port configuration
+        SerialPort(std::string name, sp::PortConfig config);
+        /// @brief open port with passed name
+        /// @param name port name
+        /// @return error enum
+        sp::PortErrors open(const std::string name);
+        /// @brief setup port with passed configuration (if port is open)
+        /// @param config port configuration
+        /// @return error enum
+        sp::PortErrors setup(sp::PortConfig config);
+        /// @brief request for port system path
+        /// @return actual path
+        std::string getPath() const {return path;};
+        /// @brief request for port configuration
+        /// @return struct with configuration
+        sp::PortConfig getConfig() const {return config;};
+        /// @brief request for port state
+        /// @return actual port state
+        sp::PortState getState() const {return state;};
         #if defined(PLATFORM_LINUX)
         SerialPortLinux port;
         #elif defined(PLATFORM_WINDOWS)
         SerialPortWindows port;
         #endif
-        std::string getPath() const {return path;};
-    
+
     private:
-        std::string path;
+        /// @brief actual port state
+        sp::PortState state = sp::PortState::Close;
+        /// @brief actual port path
+        std::string path = "dev/null";
+        /// @brief actual port config
+        sp::PortConfig config = sp::PortConfig();
 };
 
 class SerialDevice

@@ -13,16 +13,51 @@
 #include <dirent.h>
 #elif defined(PLATFORM_WINDOWS)
 #include <windows.h>
+#include "serial_port.hpp"
 #else
 #error "target platform not defined."
 #endif
 
-SerialPort::SerialPort(std::string path, sp::PortConfig config) : path(path)
+SerialPort::SerialPort(std::string name)
 {
-    if(port.openPort(path) == sp::PortState::Open)
+    (void)open(name);
+}
+
+SerialPort::SerialPort(std::string name, sp::PortConfig config)
+{
+    (void)open(name);
+    (void)setup(config);
+}
+
+sp::PortErrors SerialPort::open(const std::string name)
+{
+    sp::PortErrors error = sp::PortErrors::no_error;
+    try
     {
-        port.setup(config);
+        port.openPort(name);
+        state = sp::PortState::Open;
+        path  = name;
     }
+    catch(const std::system_error& e)
+    {
+        error = static_cast<sp::PortErrors>(e.code().value());
+    }
+    return error;
+}
+
+sp::PortErrors SerialPort::setup(sp::PortConfig config)
+{
+    sp::PortErrors error = sp::PortErrors::no_error;
+    try
+    {
+        port.setupPort(config);
+        this->config = config;
+    }
+    catch(const std::system_error& e)
+    {
+        error = static_cast<sp::PortErrors>(e.code().value());
+    }
+    return error;
 }
 
 void SerialDevice::updateAvailableDevices()

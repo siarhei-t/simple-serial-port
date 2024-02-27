@@ -27,7 +27,7 @@ int main(void)
         {
             std::cout<<"selected index : "<<index<<"\n";
             SerialPort test(actual_list[index],sp::PortConfig());
-            if(test.port.getState() == sp::PortState::Open)
+            if(test.getState() == sp::PortState::Open)
             {
                 std::cout<<"port on path " <<test.getPath()<<" opened succesfully." <<"\n";
                 std::string data_to_send = "This is a test string.";
@@ -40,6 +40,7 @@ int main(void)
                 std::string received_data(data_to_read.begin(),data_to_read.end());
                 std::cout<<"DATA READ :"<<received_data<<"\n"<<"\n";
                 test.port.closePort();
+                std::cout<<" test finished, exit.." <<"\n";
             }
             else
             {
@@ -50,7 +51,6 @@ int main(void)
         {
             std::cout<<" wrong index passed, exit.." <<"\n";
         }
-        std::cout<<" test finished, exit.." <<"\n";
     }
     else
     {
