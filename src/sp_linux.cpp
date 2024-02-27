@@ -192,20 +192,14 @@ void SerialPortLinux::setTimeOut(const int timeout_ms)
 
 void SerialPortLinux::loadPortConfiguration()
 {
-    if(state == sp::PortState::Open)
-    {
-        int stat = tcgetattr(port_desc, &(tty));
-        if(stat != 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_load_cfg));}
-    }
+    int stat = tcgetattr(port_desc, &(tty));
+    if(stat != 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_load_cfg));}
 }
 
 void SerialPortLinux::savePortConfiguration()
 {
-    if(state == sp::PortState::Open)
-    {
-        int stat = tcsetattr(port_desc, TCSANOW, &(tty));
-        if(stat != 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_save_cfg));}
-    }
+    int stat = tcsetattr(port_desc, TCSANOW, &(tty));
+    if(stat != 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_save_cfg));}
 }
 
 void SerialPortLinux::setDefaultPortConfiguration()
