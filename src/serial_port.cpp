@@ -13,7 +13,6 @@
 #include <dirent.h>
 #elif defined(PLATFORM_WINDOWS)
 #include <windows.h>
-#include "serial_port.hpp"
 #else
 #error "target platform not defined."
 #endif
@@ -29,9 +28,9 @@ SerialPort::SerialPort(std::string name, sp::PortConfig config)
     (void)setup(config);
 }
 
-sp::PortErrors SerialPort::open(const std::string name)
+std::error_code SerialPort::open(const std::string name)
 {
-    sp::PortErrors error = sp::PortErrors::no_error;
+    std::error_code error(0, sp::sp_category());
     try
     {
         port.openPort(name);
@@ -40,14 +39,14 @@ sp::PortErrors SerialPort::open(const std::string name)
     }
     catch(const std::system_error& e)
     {
-        error = static_cast<sp::PortErrors>(e.code().value());
+        error = e.code();        
     }
     return error;
 }
 
-sp::PortErrors SerialPort::setup(sp::PortConfig config)
+std::error_code SerialPort::setup(sp::PortConfig config)
 {
-    sp::PortErrors error = sp::PortErrors::no_error;
+    std::error_code error(0, sp::sp_category());
     try
     {
         port.setupPort(config);
@@ -55,7 +54,7 @@ sp::PortErrors SerialPort::setup(sp::PortConfig config)
     }
     catch(const std::system_error& e)
     {
-        error = static_cast<sp::PortErrors>(e.code().value());
+       error = e.code(); 
     }
     return error;
 }

@@ -12,6 +12,7 @@
 
 int main(void)
 {
+    
     SerialDevice sys_serial;
     auto actual_list = sys_serial.getListOfAvailableDevices();
     if(actual_list.size() > 0)
@@ -21,7 +22,7 @@ int main(void)
             std::cout<<" available device : "<<actual_list[i]<<" | index : "<<i<<"\n";
         }
         int index = 0;
-        std::cout<<" please select port to test (index no.) : " <<"\n";
+        std::cout<<" please select port to test (index no.) : ";
         std::cin>>index;
         if((index >= 0) &&  (index <= actual_list.size() - 1))
         {
@@ -56,5 +57,6 @@ int main(void)
     {
         std::cout<<"no available devises found, exit..."<<"\n";
     }
+    
     return 0;
 }

@@ -14,24 +14,12 @@
 
 namespace sp
 {
-    enum class PortErrors
-    {
-        no_error,
-        failed_to_open,
-        failed_to_read,
-        failed_to_write,
-        failed_to_load_cfg,
-        failed_to_save_cfg
-   };
-
     const std::error_category& sp_category();
-    std::error_code make_error_code(PortErrors error) noexcept;
-}
-
-namespace std
-{
-    template <>
-    struct is_error_code_enum<sp::PortErrors> : std::true_type {};
+    
+    inline std::error_code make_error_code(int error) noexcept
+    {
+         return std::error_code(error, sp_category());
+    }
 }
 
 #endif //SP_ERROR_H

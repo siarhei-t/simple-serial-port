@@ -38,12 +38,12 @@ class SerialPort
         SerialPort(std::string name, sp::PortConfig config);
         /// @brief open port with passed name
         /// @param name port name
-        /// @return error enum
-        sp::PortErrors open(const std::string name);
+        /// @return error code
+        std::error_code open(const std::string name);
         /// @brief setup port with passed configuration (if port is open)
         /// @param config port configuration
         /// @return error enum
-        sp::PortErrors setup(sp::PortConfig config);
+        std::error_code setup(sp::PortConfig config);
         /// @brief request for port system path
         /// @return actual path
         std::string getPath() const {return path;};

@@ -6,7 +6,8 @@
  * @author Siarhei Tatarchanka
  *
  */
-
+ 
+#include <errno.h>
 #include "../inc/platform/sp_linux.hpp"
 #include "../inc/sp_error.hpp"
 
@@ -14,7 +15,7 @@ void SerialPortLinux::openPort(const std::string& path)
 {
     std::string dev_path = "/dev/" + path;
     port_desc = open(dev_path.c_str(),O_RDWR);   
-    if(port_desc < 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_open));}
+    if(port_desc < 0){throw std::system_error(sp::make_error_code(errno));}
 }
 
 void SerialPortLinux::closePort(void)
@@ -40,7 +41,7 @@ void SerialPortLinux::writeString(const std::string& data)
     int stat = write(port_desc, data.c_str(), data.size());
     if(stat == -1)
     {
-        throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_write));
+        throw std::system_error(sp::make_error_code(errno));
     }
 }
 
@@ -49,7 +50,7 @@ void SerialPortLinux::writeBinary(const std::vector<std::uint8_t>& data)
     int stat = write(port_desc, data.data(), data.size());
     if(stat == -1)
     {
-        throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_write));
+        throw std::system_error(sp::make_error_code(errno));
     }
 }
 
@@ -61,7 +62,7 @@ size_t SerialPortLinux::readBinary(std::vector<std::uint8_t>& data, size_t lengt
     while(bytes_to_read != 0)
     {
         size_t n = read(port_desc, data.data(), bytes_to_read);
-        if(n < 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_read));}
+        if(n < 0){throw std::system_error(sp::make_error_code(errno));}
         else if((n > 0) && (n <= bytes_to_read))//reading 
         {
             bytes_to_read = bytes_to_read - n;
@@ -182,7 +183,7 @@ void SerialPortLinux::setTimeOut(const int timeout_ms)
     int timeout = timeout_ms/100;
     if(timeout > max_timeout)
     {
-        throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_save_cfg));
+        throw std::system_error(sp::make_error_code(errno));
     }
     else
     {
@@ -193,13 +194,13 @@ void SerialPortLinux::setTimeOut(const int timeout_ms)
 void SerialPortLinux::loadPortConfiguration()
 {
     int stat = tcgetattr(port_desc, &(tty));
-    if(stat != 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_load_cfg));}
+    if(stat != 0){throw std::system_error(sp::make_error_code(errno));}
 }
 
 void SerialPortLinux::savePortConfiguration()
 {
     int stat = tcsetattr(port_desc, TCSANOW, &(tty));
-    if(stat != 0){throw std::system_error(sp::make_error_code(sp::PortErrors::failed_to_save_cfg));}
+    if(stat != 0){throw std::system_error(sp::make_error_code(errno));}
 }
 
 void SerialPortLinux::setDefaultPortConfiguration()
