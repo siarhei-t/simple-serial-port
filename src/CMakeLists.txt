@@ -14,6 +14,7 @@ message("target platform selected as Windows.")
 set(TARGET_PLATFORM PLATFORM_WINDOWS)
 set(PLATFORM_SOURCES
         sp_windows.cpp
+        sp_error_windows.cpp
 )
 set(PLATFORM_HEADERS
         ../inc/platform/sp_windows.hpp
