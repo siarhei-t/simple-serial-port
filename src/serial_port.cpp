@@ -17,6 +17,8 @@
 #error "target platform not defined."
 #endif
 
+using namespace sp;
+
 SerialPort::SerialPort(std::string name)
 {
     (void)open(name);

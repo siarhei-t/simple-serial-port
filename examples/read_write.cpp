@@ -13,7 +13,7 @@
 int main(void)
 {
     
-    SerialDevice sys_serial;
+    sp::SerialDevice sys_serial;
     auto actual_list = sys_serial.getListOfAvailableDevices();
     if(actual_list.size() > 0)
     {
@@ -27,7 +27,7 @@ int main(void)
         if((index >= 0) &&  (index <= actual_list.size() - 1))
         {
             std::cout<<"selected index : "<<index<<"\n";
-            SerialPort test(actual_list[index],sp::PortConfig());
+            sp::SerialPort test(actual_list[index],sp::PortConfig());
             if(test.getState() == sp::PortState::Open)
             {
                 std::cout<<"port on path " <<test.getPath()<<" opened succesfully." <<"\n";
