@@ -1,5 +1,5 @@
 /**
- * @file sp_error_linux.cpp
+ * @file sp_error.cpp
  *
  * @brief 
  *
@@ -7,19 +7,22 @@
  *
  */
 
-#include <errno.h>
-#include <cstring>
 #include "../inc/sp_error.hpp"
 
 namespace
 {
     class sp_category_impl : public std::error_category
     {
+        #if defined(PLATFORM_LINUX)
         const char* name() const noexcept override { return "linux serial"; }
-
+        #elif defined(PLATFORM_WINDOWS)
+        const char* name() const noexcept override { return "windows serial"; }
+        #else
+        #error "target platform not defined."
+        #endif
         std::string message(int condition) const override
         {
-            return std::string(strerror(condition));
+            return std::system_category().message(condition);
         }
     };
 }

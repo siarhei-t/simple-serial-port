@@ -65,11 +65,11 @@ size_t SerialPortWindows::readBinary(std::vector<std::uint8_t>& data, size_t len
     data.resize(length);
     while(bytes_to_read != 0)
     {
-        WINBOOL n = ReadFile(port_desc, data.data(),length, &bytes_read, NULL);
+        WINBOOL n = ReadFile(port_desc, data.data() + bytes_read,length, &bytes_read, NULL);
         if(n == 0) {throw std::system_error(sp::make_error_code(GetLastError()));}
         else if((bytes_read > 0) && (bytes_read <= bytes_to_read)){bytes_to_read = bytes_to_read - bytes_read;}//reading
         else if(bytes_read == 0) {break;}//nothing to read  
-    }    
+    }
     data.resize(bytes_read);
     FlushFileBuffers(port_desc);
     return bytes_read;

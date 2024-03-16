@@ -12,7 +12,6 @@
 
 int main(void)
 {
-    
     sp::SerialDevice sys_serial;
     auto actual_list = sys_serial.getListOfAvailableDevices();
     if(actual_list.size() > 0)
@@ -31,7 +30,7 @@ int main(void)
             if(test.getState() == sp::PortState::Open)
             {
                 std::cout<<"port on path " <<test.getPath()<<" opened succesfully." <<"\n";
-                std::string data_to_send = "This is a test string.";
+                std::string data_to_send = "This is a test string with length more than 32 bytes";
                 std::vector<std::uint8_t> data_to_read;
                 //in case of shorted TX/RX pins test string should return in read function
                 std::cout<<"DATA SENT :"<<data_to_send<<"\n"<<"\n";
