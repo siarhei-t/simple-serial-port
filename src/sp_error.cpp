@@ -1,7 +1,7 @@
 /**
  * @file sp_error.cpp
  *
- * @brief 
+ * @brief
  *
  * @author Siarhei Tatarchanka
  *
@@ -11,30 +11,27 @@
 
 namespace
 {
-    class sp_category_impl : public std::error_category
+class sp_category_impl : public std::error_category
+{
+#if defined(PLATFORM_LINUX)
+    const char* name() const noexcept override { return "linux serial"; }
+#elif defined(PLATFORM_WINDOWS)
+    const char* name() const noexcept override { return "windows serial"; }
+#else
+#error "target platform not defined."
+#endif
+    std::string message(int condition) const override
     {
-        #if defined(PLATFORM_LINUX)
-        const char* name() const noexcept override { return "linux serial"; }
-        #elif defined(PLATFORM_WINDOWS)
-        const char* name() const noexcept override { return "windows serial"; }
-        #else
-        #error "target platform not defined."
-        #endif
-        std::string message(int condition) const override
-        {
-            return std::system_category().message(condition);
-        }
-    };
-}
+        return std::system_category().message(condition);
+    }
+};
+} // namespace
 
 namespace sp
 {
-    const std::error_category& sp_category()
-    {
-        static sp_category_impl obj;
-        return obj;
-    }
+const std::error_category& sp_category()
+{
+    static sp_category_impl obj;
+    return obj;
 }
-
-
-
+} // namespace sp
