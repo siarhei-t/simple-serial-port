@@ -1,7 +1,7 @@
 /**
  * @file serial_port.hpp
  *
- * @brief
+ * @brief serial port interface class definition
  *
  * @author Siarhei Tatarchanka
  *

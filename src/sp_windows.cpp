@@ -1,7 +1,7 @@
 /**
  * @file sp_windows.cpp
  *
- * @brief
+ * @brief implementation for class defined in sp_windows.hpp
  *
  * @author Siarhei Tatarchanka
  *

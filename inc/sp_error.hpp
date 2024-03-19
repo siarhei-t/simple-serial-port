@@ -1,7 +1,7 @@
 /**
  * @file sp_error.hpp
  *
- * @brief
+ * @brief custom system error code generator
  *
  * @author Siarhei Tatarchanka
  *

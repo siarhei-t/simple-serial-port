@@ -1,7 +1,7 @@
 /**
  * @file sp_windows.hpp
  *
- * @brief
+ * @brief class with serial port control implementation for Windows
  *
  * @author Siarhei Tatarchanka
  *

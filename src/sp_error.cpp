@@ -1,7 +1,7 @@
 /**
  * @file sp_error.cpp
  *
- * @brief
+ * @brief custom system error implementation for serial port library
  *
  * @author Siarhei Tatarchanka
  *

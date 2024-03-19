@@ -1,7 +1,7 @@
 /**
  * @file serial_port.cpp
  *
- * @brief
+ * @brief implementation for class defined in serial_port.hpp
  *
  * @author Siarhei Tatarchanka
  *

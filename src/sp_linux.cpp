@@ -1,7 +1,7 @@
 /**
  * @file sp_linux.cpp
  *
- * @brief
+ * @brief implementation for class defined in sp_linux.hpp
  *
  * @author Siarhei Tatarchanka
  *
