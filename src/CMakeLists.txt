@@ -1,8 +1,4 @@
-cmake_minimum_required (VERSION 3.15)
-
-project (simple-serial-port)
-
-enable_language(CXX)
+cmake_minimum_required (VERSION 3.20)
 
 option(TARGET_WINDOWS "build for Windows" OFF)
 option(TARGET_LINUX   "build for Lunux"   OFF)
@@ -46,12 +42,24 @@ message("")
 message("*************************************")
 
 if(NOT DEFINED TARGET_PLATFORM)
-message( SEND_ERROR "target platform is nor defined.")
+message( SEND_ERROR "target platform is not defined.")
 endif()
 
-add_library (${PROJECT_NAME} STATIC ${COMMON_SOURCES} ${PLATFORM_SOURCES} ${COMMON_HEADERS} ${PLATFORM_HEADERS})
-target_compile_definitions(${PROJECT_NAME} PRIVATE ${TARGET_PLATFORM}=1)
-target_include_directories(${PROJECT_NAME} PRIVATE
+project (simple-serial-port)
+add_library (${PROJECT_NAME} INTERFACE)
+
+enable_language(CXX)
+
+target_sources(${PROJECT_NAME} INTERFACE
+        ${COMMON_SOURCES}
+        ${PLATFORM_SOURCES}
+        ${COMMON_HEADERS}
+        ${PLATFORM_HEADERS}
+        )
+
+target_compile_definitions(${PROJECT_NAME} INTERFACE ${TARGET_PLATFORM}=1)
+
+target_include_directories(${PROJECT_NAME} INTERFACE
         ../inc
         ../inc/platform
         )

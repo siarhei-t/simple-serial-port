@@ -1,23 +1,21 @@
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required (VERSION 3.20)
+
+set(CMAKE_PROJECT_NAME 32f0308discovery-demo)
 
 project (read-write-example)
+add_executable (${PROJECT_NAME})
 
-set(EXECUTABLE ${PROJECT_NAME})
-
-set (DIR_SRCS
+target_sources(${PROJECT_NAME} PRIVATE
         read_write.cpp
-    )
-
-add_executable (${EXECUTABLE} ${DIR_SRCS})
+)
 
 add_subdirectory(../src serial-port)
 get_directory_property(TARGET_PLATFORM DIRECTORY ../src DEFINITION TARGET_PLATFORM)
 
-target_link_directories(${EXECUTABLE} PUBLIC src)
-target_link_libraries (${EXECUTABLE} simple-serial-port)
-target_compile_definitions(${EXECUTABLE} PRIVATE ${TARGET_PLATFORM}=1)
+target_link_libraries (${PROJECT_NAME} simple-serial-port)
+target_compile_definitions(${PROJECT_NAME} PRIVATE ${TARGET_PLATFORM}=1)
 
 #common inclide path
-target_include_directories(${EXECUTABLE} PRIVATE
-        ../inc    
+target_include_directories(${PROJECT_NAME} PRIVATE
+        ../inc
         )
