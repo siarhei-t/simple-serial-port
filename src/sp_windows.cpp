@@ -32,7 +32,7 @@ void SerialPortWindows::closePort(void)
     port_desc = INVALID_HANDLE_VALUE;
 }
 
-void SerialPortLinux::flushPort()
+void SerialPortWindows::flushPort()
 {
     FlushFileBuffers(port_desc);
 }
