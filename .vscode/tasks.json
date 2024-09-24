@@ -3,39 +3,65 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Build",
-            "command": "cmake --build build",
+            "label": "BUILD-LIB",
+            "command": "cmake --build build-lib",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "options": {"cwd": "${workspaceFolder}/examples"},
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": []
         },
         {
             "type": "shell",
-            "label": "Rebuild",
-            "command": "cmake --build build --clean-first",
+            "label": "BUILD-DEMO",
+            "command": "cmake --build build-demo",
             "group": {
                 "kind": "build",
-                "isDefault": false
+                "isDefault": true
             },
-            "options": {"cwd": "${workspaceFolder}/examples"},
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": []
         },
         {
             "type": "shell",
-            "label": "Configure-Windows",
-            "command": "cmake -DTARGET_WINDOWS=ON -Bbuild",
-            "options": {"cwd": "${workspaceFolder}/examples"},
+            "label": "WINDOWS-CFG-LIBRARY",
+            "command": "cmake lib -DTARGET_WINDOWS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release -Bbuild-lib",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": []
         },
         {
             "type": "shell",
-            "label": "Configure-Linux",
-            "command": "cmake -DTARGET_LINUX=ON -Bbuild",
-            "options": {"cwd": "${workspaceFolder}/examples"},
+            "label": "LINUX-CFG-LIBRARY",
+            "command": "cmake lib -DTARGET_LINUX=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release -Bbuild-lib",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": []
         },
+        {
+            "type": "shell",
+            "label": "WINDOWS-CFG-DEMO",
+            "command": "cmake examples -DTARGET_WINDOWS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release -Bbuild-demo",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "LINUX-CFG-DEMO",
+            "command": "cmake examples -DTARGET_LINUX=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release -Bbuild-demo",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        }
     ]
 }
