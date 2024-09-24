@@ -93,24 +93,28 @@ void SerialDevice::updateAvailableDevices()
 #else
     char dev_path[256];
 #endif
-
     for (auto i = 0; i < 255; ++i)
     {
-        std::string device = "COM" + std::to_string(i);
-#if defined(UNICODE)
-        std::wstring converted_device =
-            std::wstring(device.begin(), device.end());
-        DWORD result = QueryDosDevice(converted_device.c_str(), dev_path, 256);
-#else
-        DWORD result = QueryDosDevice(device.c_str(), dev_path, 256);
-#endif
-        if (result != 0)
+        std::string templates[] = {"COM" + std::to_string(i),
+                                   "CNCA" + std::to_string(i),
+                                   "CNCB" + std::to_string(i)};
+
+        for(std::string &device : templates)
         {
-            devices.push_back(device);
-        }
-        else
-        {
-            continue;
+            #if defined(UNICODE)
+            std::wstring converted_device = std::wstring(device.begin(), device.end());
+            DWORD result = QueryDosDevice(converted_device.c_str(), dev_path, 256);
+            #else
+            DWORD result = QueryDosDevice(device.c_str(), dev_path, 256);
+            #endif
+            if (result != 0)
+            {
+                devices.push_back(device);
+            }
+            else
+            {
+                continue;
+            }
         }
     }
 #elif defined(PLATFORM_LINUX)
