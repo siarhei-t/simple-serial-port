@@ -60,7 +60,7 @@ jobs:
       if: runner.os != 'Windows'
       run: >
         cmake lib -DTARGET_LINUX=ON
-        -B ${{github.workspace}}/build}
+        -B ${{github.workspace}}/build
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
@@ -71,7 +71,7 @@ jobs:
       if: runner.os == 'Windows'
       run: >
         cmake lib -DTARGET_WINDOWS=ON
-        -B ${{github.workspace}}/build}
+        -B ${{github.workspace}}/build
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
