@@ -9,19 +9,74 @@
 
 #include "../inc/serial_port.hpp"
 #include "../inc/sp_error.hpp"
+#if defined(PLATFORM_LINUX)
+#include "../inc/platform/sp_linux.hpp"
+#elif defined(PLATFORM_WINDOWS)
+#include "../inc/platform/sp_windows.hpp"
+#elif defined(PLATFORM_APPLE)
+#include "../inc/platform/sp_apple.hpp"
+#else
+#error "target platform not defined."
+#endif
 
 using namespace sp;
 
-SerialPort::SerialPort(std::string name)
+struct SerialPort::Platform
 {
-    std::error_code error_code = open(name);
-    if(error_code)
+    #if defined(PLATFORM_LINUX)
+    SerialPortLinux port;
+    #elif defined(PLATFORM_WINDOWS)
+    SerialPortWindows port;
+    #elif defined(PLATFORM_APPLE)
+    SerialPortApple port;
+    #endif
+    /// @brief open port
+    /// @param path string with path to device
+    void openPort(const std::string& path)
     {
-        throw std::system_error(error_code);
+        port.openPort(path);
     }
-}
+    /// @brief close actual port if opened
+    void closePort()
+    {
+        port.closePort();
+    }
+    /// @brief setup port with new configuration
+    /// @param config struct with port configuration
+    void setupPort(const sp::PortConfig& config)
+    {
+        port.setupPort(config);
+    }
+    /// @brief write string data to actual port
+    /// @param data string object with data to send
+    void writeString(const std::string& data)
+    {
+        port.writeString(data);
+    }
+    /// @brief write raw data to actual port
+    /// @param data string object with data to send
+    void writeBinary(const std::vector<std::uint8_t>& data)
+    {
+        port.writeBinary(data);
+    }
+    /// @brief read raw data from port
+    /// @param data reference to vector with buffer for data
+    /// @param length how many bytes we expect to read during timeout
+    /// @returns how many bytes we read actually
+    size_t readBinary(std::vector<std::uint8_t>& data, size_t length)
+    {
+        return port.readBinary(data, length);
+    }
+    /// @brief reset internal OS buffers
+    void flushPort()
+    {
+        port.flushPort();
+    }
+};
 
-SerialPort::SerialPort(std::string name, sp::PortConfig config)
+SerialPort::SerialPort(): impl(std::make_unique<Platform>()){}
+
+SerialPort::SerialPort(std::string name, sp::PortConfig config) : impl(std::make_unique<Platform>())
 {
     std::error_code error_code = open(name);
     if(error_code)
@@ -40,8 +95,8 @@ std::error_code SerialPort::open(const std::string name)
     std::error_code error_code = std::error_code();
     try
     {
-        port.openPort(name);
-        port.flushPort();
+        impl->openPort(name);
+        flushPort();
         state = sp::PortState::Open;
         path = name;
     }
@@ -54,9 +109,9 @@ std::error_code SerialPort::open(const std::string name)
 
 void SerialPort::close()
 {
-    port.closePort();
+    impl->closePort();
     state = sp::PortState::Close;
-    path = "dev/null";
+    path = "NULL";
 }
 
 std::error_code SerialPort::setup(sp::PortConfig config)
@@ -64,7 +119,7 @@ std::error_code SerialPort::setup(sp::PortConfig config)
     std::error_code error(0, sp::sp_category());
     try
     {
-        port.setupPort(config);
+        impl->setupPort(config);
         this->config = config;
     }
     catch (const std::system_error& e)
@@ -74,3 +129,22 @@ std::error_code SerialPort::setup(sp::PortConfig config)
     return error;
 }
 
+void SerialPort::writeString(const std::string& data)
+{
+    impl->writeString(data);
+}
+
+void SerialPort::writeBinary(const std::vector<std::uint8_t>& data)
+{
+    impl->writeBinary(data);
+}
+
+size_t SerialPort::readBinary(std::vector<std::uint8_t>& data, size_t length)
+{
+    return impl->readBinary(data, length);
+}
+
+void SerialPort::flushPort()
+{
+    impl->flushPort();
+}

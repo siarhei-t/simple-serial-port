@@ -12,18 +12,7 @@
 
 #include <string>
 #include <vector>
-#include <system_error>
-
 #include "../inc/sp_types.hpp"
-#if defined(PLATFORM_LINUX)
-#include "../inc/platform/sp_linux.hpp"
-#elif defined(PLATFORM_WINDOWS)
-#include "../inc/platform/sp_windows.hpp"
-#elif defined(PLATFORM_APPLE)
-#include "../inc/platform/sp_apple.hpp"
-#else
-#error "target platform not defined."
-#endif
 
 namespace sp
 {
@@ -31,10 +20,7 @@ class SerialPort
 {
 public:
     /// @brief default constructor
-    SerialPort() = default;
-    /// @brief constructor that will open port
-    /// @param name port name to open
-    SerialPort(std::string name);
+    SerialPort();
     /// @brief constructor that will open port and configure it
     /// @param name port name to open
     /// @param config port configuration
@@ -58,19 +44,29 @@ public:
     /// @brief request for port state
     /// @return actual port state
     sp::PortState getState() const { return state; };
-#if defined(PLATFORM_LINUX)
-    SerialPortLinux port;
-#elif defined(PLATFORM_WINDOWS)
-    SerialPortWindows port;
-#elif defined(PLATFORM_APPLE)
-    SerialPortApple port;
-#endif
+    /// @brief write string data to actual port
+    /// @param data string object with data to send
+    void writeString(const std::string& data);
+    /// @brief write raw data to actual port
+    /// @param data string object with data to send
+    void writeBinary(const std::vector<std::uint8_t>& data);
+    /// @brief read raw data from port
+    /// @param data reference to vector with buffer for data
+    /// @param length how many bytes we expect to read during timeout
+    /// @returns how many bytes we read actually
+    size_t readBinary(std::vector<std::uint8_t>& data, size_t length);
+    /// @brief reset internal OS buffers
+    void flushPort();
 
 private:
+    /// @brief class for platform depended serial port implementation
+    struct Platform;
+    /// @brief unique pointer to platform depended serial port implementation
+    std::unique_ptr<Platform> impl;  
     /// @brief actual port state
     sp::PortState state = sp::PortState::Close;
     /// @brief actual port path
-    std::string path = "dev/null";
+    std::string path = "NULL";
     /// @brief actual port config
     sp::PortConfig config = sp::PortConfig();
 };
