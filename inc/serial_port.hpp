@@ -28,7 +28,7 @@ namespace sp
 class SerialPort
 {
 public:
-    /// @brief default coustructor
+    /// @brief default constructor
     SerialPort() = default;
     /// @brief constructor that will open port
     /// @param name port name to open
@@ -75,10 +75,10 @@ class SerialDevice
 {
 public:
     SerialDevice() { updateAvailableDevices(); };
-    /// @brief plaform depended call to update list with serial port devices
+    /// @brief platform depended call to update list with serial port devices
     void updateAvailableDevices();
     /// @brief request for list with serial port devices in system
-    /// @return referense to a vector with devices
+    /// @return reference to a vector with devices
     std::vector<std::string>& getListOfAvailableDevices() { return devices; };
     /// @brief request for list with serial port devices in system
     /// @return vector with devices
@@ -88,7 +88,7 @@ public:
     };
 
 private:
-    /// @brief vertor with actual list of available serial ports
+    /// @brief vector with actual list of available serial ports
     std::vector<std::string> devices;
 };
 } // namespace sp

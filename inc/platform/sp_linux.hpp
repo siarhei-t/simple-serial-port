@@ -9,6 +9,8 @@
 #ifndef SP_LINUX_H
 #define SP_LINUX_H
 
+#if defined(PLATFORM_LINUX)
+
 #include "../sp_types.hpp"
 #include <cstdint>
 #include <errno.h>
@@ -72,5 +74,5 @@ private:
     // \brief load default configuration to the tty struct
     void setDefaultPortConfiguration();
 };
-
+#endif // PLATFORM_LINUX
 #endif // SP_LINUX_H
