@@ -7,6 +7,7 @@
  *
  */
 
+#if defined(PLATFORM_WINDOWS)
 #include "../inc/platform/sp_windows.hpp"
 #include "../inc/sp_error.hpp"
 
@@ -229,3 +230,5 @@ void SerialPortWindows::savePortConfiguration()
         throw std::system_error(sp::make_error_code(GetLastError()));
     }
 }
+
+#endif // PLATFORM_WINDOWS

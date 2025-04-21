@@ -1,7 +1,7 @@
 /**
  * @file sp_types.hpp
  *
- * @brief common types definisions for serial port library
+ * @brief common types definitions for serial port library
  *
  * @author Siarhei Tatarchanka
  *

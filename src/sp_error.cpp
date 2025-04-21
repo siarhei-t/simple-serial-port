@@ -17,7 +17,9 @@ class sp_category_impl : public std::error_category
     const char* name() const noexcept override { return "linux serial"; }
 #elif defined(PLATFORM_WINDOWS)
     const char* name() const noexcept override { return "windows serial"; }
-#else
+    #elif defined(PLATFORM_APPLE)
+    const char* name() const noexcept override { return "apple serial"; }
+    #else
 #error "target platform not defined."
 #endif
     std::string message(int condition) const override

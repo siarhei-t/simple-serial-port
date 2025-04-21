@@ -3,8 +3,12 @@
         "-log=verbose",
         "-pretty",
         "--background-index",
-        "--compile-commands-dir=${workspaceFolder}/build-demo",
+        "--compile-commands-dir=${workspaceFolder}/build-lib",
         "--query-driver=**"
     ],
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "cSpell.words": [
+        "Siarhei",
+        "Tatarchanka"
+    ]
 }
