@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 #include <system_error>
 #include <memory>
 #include "../inc/sp_types.hpp"
