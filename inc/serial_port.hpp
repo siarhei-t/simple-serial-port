@@ -19,6 +19,8 @@
 #include "../inc/platform/sp_linux.hpp"
 #elif defined(PLATFORM_WINDOWS)
 #include "../inc/platform/sp_windows.hpp"
+#elif defined(PLATFORM_APPLE)
+#include "../inc/platform/sp_apple.hpp"
 #else
 #error "target platform not defined."
 #endif
@@ -60,6 +62,8 @@ public:
     SerialPortLinux port;
 #elif defined(PLATFORM_WINDOWS)
     SerialPortWindows port;
+#elif defined(PLATFORM_APPLE)
+    SerialPortApple port;
 #endif
 
 private:

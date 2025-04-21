@@ -28,6 +28,17 @@ set(PLATFORM_HEADERS
 )
 endif()
 
+if(TARGET_APPLE)
+message("target platform selected as Mac.")
+set(TARGET_PLATFORM PLATFORM_APPLE)
+set(PLATFORM_SOURCES
+        src/sp_apple.cpp
+)
+set(PLATFORM_HEADERS
+        inc/platform/sp_apple.hpp
+)
+endif()
+
 set(COMMON_SOURCES
         src/serial_port.cpp
         src/sp_error.cpp

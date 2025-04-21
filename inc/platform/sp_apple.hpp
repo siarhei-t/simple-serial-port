@@ -1,30 +1,29 @@
 /**
- * @file sp_linux.hpp
+ * @file sp_apple.hpp
  *
- * @brief class with serial port control implementation for Linux
+ * @brief class with serial port control implementation for Apple
  *
  * @author Siarhei Tatarchanka
  *
  */
-#ifndef SP_LINUX_H
-#define SP_LINUX_H
+#ifndef SP_APPLE_H
+#define SP_APPLE_H
 
-#if defined(PLATFORM_LINUX)
+#if defined(PLATFORM_APPLE)
 
 #include "../sp_types.hpp"
 #include <cstdint>
-#include <errno.h>
 #include <fcntl.h>
 #include <string>
 #include <termios.h>
 #include <unistd.h>
 #include <vector>
 
-class SerialPortLinux
+class SerialPortApple
 {
 public:
-    SerialPortLinux() = default;
-    ~SerialPortLinux() { closePort(); }
+    SerialPortApple() = default;
+    ~SerialPortApple() { closePort(); }
     /// @brief open port
     /// @param path string with path to device
     void openPort(const std::string& path);
@@ -74,5 +73,5 @@ private:
     // \brief load default configuration to the tty struct
     void setDefaultPortConfiguration();
 };
-#endif // PLATFORM_LINUX
-#endif // SP_LINUX_H
+#endif // PLATFORM_APPLE
+#endif // SP_APPLE_H

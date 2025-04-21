@@ -14,6 +14,9 @@
 #include <sys/types.h>
 #elif defined(PLATFORM_WINDOWS)
 #include <windows.h>
+#elif defined(PLATFORM_APPLE)
+#include <dirent.h>
+#include <sys/types.h>
 #else
 #error "target platform not defined."
 #endif
