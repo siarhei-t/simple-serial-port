@@ -76,6 +76,8 @@ struct SerialPort::Platform
 
 SerialPort::SerialPort(): impl(std::make_unique<Platform>()){}
 
+SerialPort::~SerialPort(){}
+
 SerialPort::SerialPort(std::string name, sp::PortConfig config) : impl(std::make_unique<Platform>())
 {
     std::error_code error_code = open(name);

@@ -24,6 +24,8 @@ class SerialPort
 public:
     /// @brief default constructor
     SerialPort();
+    /// @brief default destructor
+    ~SerialPort();
     /// @brief constructor that will open port and configure it
     /// @param name port name to open
     /// @param config port configuration
