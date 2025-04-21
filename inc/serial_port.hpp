@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include <system_error>
 #include "../inc/sp_types.hpp"
 
 namespace sp
