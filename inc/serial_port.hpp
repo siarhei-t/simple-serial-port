@@ -74,27 +74,6 @@ private:
     /// @brief actual port config
     sp::PortConfig config = sp::PortConfig();
 };
-
-class SerialDevice
-{
-public:
-    SerialDevice() { updateAvailableDevices(); };
-    /// @brief platform depended call to update list with serial port devices
-    void updateAvailableDevices();
-    /// @brief request for list with serial port devices in system
-    /// @return reference to a vector with devices
-    std::vector<std::string>& getListOfAvailableDevices() { return devices; };
-    /// @brief request for list with serial port devices in system
-    /// @return vector with devices
-    std::vector<std::string> getListOfAvailableDevices() const
-    {
-        return devices;
-    };
-
-private:
-    /// @brief vector with actual list of available serial ports
-    std::vector<std::string> devices;
-};
 } // namespace sp
 
 #endif // SERIAL_PORT_H
