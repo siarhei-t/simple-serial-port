@@ -13,15 +13,13 @@ namespace
 {
 class sp_category_impl : public std::error_category
 {
-#if defined(PLATFORM_LINUX)
-    const char* name() const noexcept override { return "linux serial"; }
-#elif defined(PLATFORM_WINDOWS)
+    #if defined(__APPLE__) || defined(__linux__)
+    const char* name() const noexcept override { return "posix serial"; }
+    #elif defined(_WIN32)
     const char* name() const noexcept override { return "windows serial"; }
-    #elif defined(PLATFORM_APPLE)
-    const char* name() const noexcept override { return "apple serial"; }
     #else
-#error "target platform not defined."
-#endif
+    #error "target platform not defined."
+    #endif
     std::string message(int condition) const override
     {
         return std::system_category().message(condition);

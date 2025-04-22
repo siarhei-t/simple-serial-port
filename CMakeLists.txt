@@ -1,71 +1,49 @@
-cmake_minimum_required (VERSION 3.20)
-
-option(TARGET_WINDOWS "build for Windows" OFF)
-option(TARGET_LINUX   "build for Linux"   OFF)
-
-message("*************************************")
-message("")
-if(TARGET_WINDOWS)
-message("target platform selected as Windows.")
-set(TARGET_PLATFORM PLATFORM_WINDOWS)
-set(PLATFORM_SOURCES
-        src/sp_windows.cpp
-)
-set(PLATFORM_HEADERS
-        inc/platform/sp_windows.hpp
-)
-endif()
-
-if(TARGET_LINUX)
-message("target platform selected as Linux.")
-set(TARGET_PLATFORM PLATFORM_LINUX)
-set(PLATFORM_SOURCES
-        src/sp_linux.cpp
-)
-
-set(PLATFORM_HEADERS
-        inc/platform/sp_linux.hpp
-)
-endif()
-
-if(TARGET_APPLE)
-message("target platform selected as Mac.")
-set(TARGET_PLATFORM PLATFORM_APPLE)
-set(PLATFORM_SOURCES
-        src/sp_apple.cpp
-)
-set(PLATFORM_HEADERS
-        inc/platform/sp_apple.hpp
-)
-endif()
-
-set(COMMON_SOURCES
-        src/serial_port.cpp
-        src/sp_error.cpp
-)
-
-set(COMMON_HEADERS
-        inc/sp_types.hpp
-        inc/serial_port.hpp
-        inc/sp_error.hpp
-)
-
-message("")
-message("*************************************")
-
-if(NOT DEFINED TARGET_PLATFORM)
-message( SEND_ERROR "target platform is not defined.")
-endif()
-
-project (simple-serial-port)
-
-add_library (${PROJECT_NAME} STATIC ${COMMON_SOURCES} ${PLATFORM_SOURCES} ${COMMON_HEADERS} ${PLATFORM_HEADERS} )
+cmake_minimum_required(VERSION 3.20)
+project(simple-serial-port)
 
 enable_language(CXX)
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE ${TARGET_PLATFORM}=1)
+message("*************************************")
+message("Detecting platform...")
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(PLATFORM_NAME "Windows")
+    set(PLATFORM_SOURCES src/sp_windows.cpp)
+    set(PLATFORM_HEADERS inc/platform/sp_windows.hpp)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(PLATFORM_NAME "Linux")
+    set(PLATFORM_SOURCES src/sp_posix.cpp)
+    set(PLATFORM_HEADERS inc/platform/sp_posix.hpp)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(PLATFORM_NAME "macOS")
+    set(PLATFORM_SOURCES src/sp_posix.cpp)
+    set(PLATFORM_HEADERS inc/platform/sp_posix.hpp)
+else()
+    message(FATAL_ERROR "Unsupported platform: ${CMAKE_SYSTEM_NAME}")
+endif()
+
+message("Target platform: ${PLATFORM_NAME}")
+message("*************************************")
+
+set(COMMON_SOURCES
+    src/serial_port.cpp
+    src/sp_error.cpp
+)
+
+set(COMMON_HEADERS
+    inc/serial_port.hpp
+    inc/sp_types.hpp
+    inc/sp_error.hpp
+)
+
+add_library(${PROJECT_NAME} STATIC
+    ${COMMON_SOURCES}
+    ${COMMON_HEADERS}
+    ${PLATFORM_SOURCES}
+    ${PLATFORM_HEADERS}
+)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-        inc
-        inc/platform
-        )
+    inc
+    inc/platform
+)

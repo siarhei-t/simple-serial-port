@@ -9,12 +9,10 @@
 
 #include "../inc/serial_port.hpp"
 #include "../inc/sp_error.hpp"
-#if defined(PLATFORM_LINUX)
-#include "../inc/platform/sp_linux.hpp"
-#elif defined(PLATFORM_WINDOWS)
+#if defined(__APPLE__) || defined(__linux__)
+#include "../inc/platform/sp_posix.hpp"
+#elif defined(_WIN32)
 #include "../inc/platform/sp_windows.hpp"
-#elif defined(PLATFORM_APPLE)
-#include "../inc/platform/sp_apple.hpp"
 #else
 #error "target platform not defined."
 #endif
@@ -23,12 +21,10 @@ using namespace sp;
 
 struct SerialPort::Platform
 {
-    #if defined(PLATFORM_LINUX)
-    SerialPortLinux port;
-    #elif defined(PLATFORM_WINDOWS)
+    #if defined(__APPLE__) || defined(__linux__)
+    SerialPortPosix port;
+    #elif defined(_WIN32)
     SerialPortWindows port;
-    #elif defined(PLATFORM_APPLE)
-    SerialPortApple port;
     #endif
     /// @brief open port
     /// @param path string with path to device

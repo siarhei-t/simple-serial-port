@@ -7,7 +7,7 @@
  *
  */
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(_WIN32)
 #include "../inc/platform/sp_windows.hpp"
 #include "../inc/sp_error.hpp"
 
@@ -231,4 +231,4 @@ void SerialPortWindows::savePortConfiguration()
     }
 }
 
-#endif // PLATFORM_WINDOWS
+#endif // defined(_WIN32)

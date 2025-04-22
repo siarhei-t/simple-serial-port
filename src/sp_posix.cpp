@@ -1,18 +1,17 @@
 /**
- * @file sp_linux.cpp
+ * @file sp_apple.cpp
  *
- * @brief implementation for class defined in sp_linux.hpp
+ * @brief implementation for class defined in sp_posix.hpp
  *
  * @author Siarhei Tatarchanka
  *
  */
 
-#if defined(PLATFORM_LINUX)
-#include "../inc/platform/sp_linux.hpp"
+#include "../inc/platform/sp_posix.hpp"
 #include "../inc/sp_error.hpp"
 #include <errno.h>
 
-void SerialPortLinux::openPort(const std::string& path)
+void SerialPortPosix::openPort(const std::string& path)
 {
     std::string dev_path = "/dev/" + path;
     port_desc = open(dev_path.c_str(), O_RDWR);
@@ -22,18 +21,18 @@ void SerialPortLinux::openPort(const std::string& path)
     }
 }
 
-void SerialPortLinux::closePort(void)
+void SerialPortPosix::closePort(void)
 {
     close(port_desc);
     port_desc = -1;
 }
 
-void SerialPortLinux::flushPort()
+void SerialPortPosix::flushPort()
 {
     tcflush(port_desc, TCIOFLUSH);
 }
 
-void SerialPortLinux::setupPort(const sp::PortConfig& config)
+void SerialPortPosix::setupPort(const sp::PortConfig& config)
 {
     loadPortConfiguration();
     setDefaultPortConfiguration();
@@ -45,7 +44,7 @@ void SerialPortLinux::setupPort(const sp::PortConfig& config)
     savePortConfiguration();
 }
 
-void SerialPortLinux::writeString(const std::string& data)
+void SerialPortPosix::writeString(const std::string& data)
 {
     int stat = write(port_desc, data.c_str(), data.size());
     if (stat == -1)
@@ -54,7 +53,7 @@ void SerialPortLinux::writeString(const std::string& data)
     }
 }
 
-void SerialPortLinux::writeBinary(const std::vector<std::uint8_t>& data)
+void SerialPortPosix::writeBinary(const std::vector<std::uint8_t>& data)
 {
     int stat = write(port_desc, data.data(), data.size());
     if (stat == -1)
@@ -63,7 +62,7 @@ void SerialPortLinux::writeBinary(const std::vector<std::uint8_t>& data)
     }
 }
 
-size_t SerialPortLinux::readBinary(std::vector<std::uint8_t>& data,
+size_t SerialPortPosix::readBinary(std::vector<std::uint8_t>& data,
                                    size_t length)
 {
     size_t bytes_to_read = length;
@@ -91,7 +90,7 @@ size_t SerialPortLinux::readBinary(std::vector<std::uint8_t>& data,
     return bytes_read;
 }
 
-void SerialPortLinux::setParity(const sp::PortParity parity)
+void SerialPortPosix::setParity(const sp::PortParity parity)
 {
     switch (parity)
     {
@@ -114,7 +113,7 @@ void SerialPortLinux::setParity(const sp::PortParity parity)
     }
 }
 
-void SerialPortLinux::setBaudRate(const sp::PortBaudRate baudrate)
+void SerialPortPosix::setBaudRate(const sp::PortBaudRate baudrate)
 {
     switch (baudrate)
     {
@@ -148,7 +147,7 @@ void SerialPortLinux::setBaudRate(const sp::PortBaudRate baudrate)
     }
 }
 
-void SerialPortLinux::setDataBits(const sp::PortDataBits num_of_data_bits)
+void SerialPortPosix::setDataBits(const sp::PortDataBits num_of_data_bits)
 {
     tty.c_cflag &= ~CSIZE;
 
@@ -175,7 +174,7 @@ void SerialPortLinux::setDataBits(const sp::PortDataBits num_of_data_bits)
     }
 }
 
-void SerialPortLinux::setStopBits(const sp::PortStopBits num_of_stop_bits)
+void SerialPortPosix::setStopBits(const sp::PortStopBits num_of_stop_bits)
 {
     switch (num_of_stop_bits)
     {
@@ -192,7 +191,7 @@ void SerialPortLinux::setStopBits(const sp::PortStopBits num_of_stop_bits)
     }
 }
 
-void SerialPortLinux::setTimeOut(const int timeout_ms)
+void SerialPortPosix::setTimeOut(const int timeout_ms)
 {
     const unsigned char max_timeout = 0xFF;
     tty.c_cc[VMIN] = 0;
@@ -207,7 +206,7 @@ void SerialPortLinux::setTimeOut(const int timeout_ms)
     }
 }
 
-void SerialPortLinux::loadPortConfiguration()
+void SerialPortPosix::loadPortConfiguration()
 {
     int stat = tcgetattr(port_desc, &(tty));
     if (stat != 0)
@@ -216,7 +215,7 @@ void SerialPortLinux::loadPortConfiguration()
     }
 }
 
-void SerialPortLinux::savePortConfiguration()
+void SerialPortPosix::savePortConfiguration()
 {
     int stat = tcsetattr(port_desc, TCSANOW, &(tty));
     if (stat != 0)
@@ -225,7 +224,7 @@ void SerialPortLinux::savePortConfiguration()
     }
 }
 
-void SerialPortLinux::setDefaultPortConfiguration()
+void SerialPortPosix::setDefaultPortConfiguration()
 {
     // hardware flow control disabled
     tty.c_cflag &= ~CRTSCTS;
@@ -244,5 +243,3 @@ void SerialPortLinux::setDefaultPortConfiguration()
     tty.c_oflag &= ~OPOST;
     tty.c_oflag &= ~ONLCR;
 }
-
-#endif // PLATFORM_LINUX
