@@ -29,7 +29,7 @@
         },
         {
             "type": "shell",
-            "label": "WINDOWS-CFG-LIBRARY",
+            "label": "CFG-LIBRARY",
             "command": "cmake -DTARGET_WINDOWS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release -Bbuild-lib",
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -38,44 +38,8 @@
         },
         {
             "type": "shell",
-            "label": "LINUX-CFG-LIBRARY",
-            "command": "cmake -DTARGET_LINUX=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release -Bbuild-lib",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": []
-        },
-        {
-            "type": "shell",
-            "label": "APPLE-CFG-LIBRARY",
-            "command": "cmake -DTARGET_APPLE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release -Bbuild-lib",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": []
-        },
-        {
-            "type": "shell",
-            "label": "WINDOWS-CFG-DEMO",
+            "label": "CFG-DEMO",
             "command": "cmake examples -DTARGET_WINDOWS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release -Bbuild-demo",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": []
-        },
-        {
-            "type": "shell",
-            "label": "LINUX-CFG-DEMO",
-            "command": "cmake examples -DTARGET_LINUX=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release -Bbuild-demo",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": []
-        },
-        {
-            "type": "shell",
-            "label": "APPLE-CFG-DEMO",
-            "command": "cmake examples -DTARGET_APPLE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release -Bbuild-demo",
             "options": {
                 "cwd": "${workspaceFolder}"
             },

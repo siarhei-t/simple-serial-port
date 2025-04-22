@@ -9,7 +9,7 @@
 #ifndef SP_WINDOWS_H
 #define SP_WINDOWS_H
 
-#if defined(PLATFORM_WINDOWS)
+#if defined(_WIN32)
 
 #include "../sp_types.hpp"
 #include <cstdint>
@@ -70,5 +70,5 @@ private:
     void savePortConfiguration();
 };
 
-#endif // PLATFORM_WINDOWS
+#endif // defined(_WIN32)
 #endif // SP_WINDOWS_H
