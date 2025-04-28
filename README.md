@@ -2,7 +2,7 @@
 
 [![CMake](https://github.com/SergeyTatarchenko/simple-serial-port/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/SergeyTatarchenko/simple-serial-port/actions/workflows/cmake-multi-platform.yml)
 
-A small library written in modern C++ for working with a serial port with limited configuration options, designed to work with chips such as ft232, ch340, etc. Can be built for Windows and Linux.
+A small library written in modern C++ for working with a serial port with limited configuration options, designed to work with chips such as ft232, ch340, etc. Can be built for Windows, MacOS or Linux.
 
 ## Table of contents
 * [Features](#features)
@@ -16,17 +16,12 @@ Supported baudrates:  9600, 19200, 38400, 57600, 115200
 
 ## Building
 
-In the example, configuration is done using Cmake. Ninja is used as the default build tool. However, any other build tool can also be used.
+In the example, configuration is done using Cmake.
 
-**Configure for Windows:** 
-
-```sh
-cmake -DTARGET_WINDOWS=ON -Bbuild
-```
-**Configure for Linux:** 
+**Configure** 
 
 ```sh
-cmake -DTARGET_LINUX=ON -Bbuild
+cmake -Bbuild
 ```
 
 **Building:**
@@ -36,70 +31,85 @@ cmake --build build
 
 ## Examples
 
-**SerialPort:**
-
-```c++
-#include <iostream>
-#include "serial_port.hpp"
-
-int main()
-{
-    //create serial port instance
-    sp::SerialPort serial_port;
-    //test string to send and read
-    std::string test = "Hello world!";
-    //test buffer to read data from port
-    std::vector<std::uint8_t> buffer;
-    //open serial port
-    auto error = serial_port.open("COM1");
-    if(error.value() == 0)
-    {
-        //setup port in case of no errors
-        //default config : 9600 baudrate, 8 databits, 1 stop bit, no parity, 1s timeout
-        error = serial_port.setup(sp::PortConfig()); 
-        if(error.value() == 0)
-        {
-            //write data to port   
-            serial_port.port.writeString(test);
-            //reading data from port, read size used the same as test string has, 
-            //because we are trying to read the same data in case of TX/RX pin shorting
-            auto bytes_read = serial_port.port.readBinary(buffer,test.size());
-            //create string from raw received data 
-            std::string responce(buffer.begin(),buffer.end());
-            std::cout<<"read from port :"<<responce<<"\n";
-            //close port
-            serial_port.port.closePort();
-        }
-    }
-    return 0;
-}
+Create virtual com pair with Socat:
+```sh
+socat -d -d pty,raw,echo=0 pty,raw,echo=0
 ```
-
-**SerialDevice:**
-
+Add this project as a library:
+```Cmake
+add_subdirectory(simple-serial-port)
+target_link_libraries (${PROJECT_NAME} simple-serial-port)
+```
+Example:
 ```c++
 #include <iostream>
+#include <string>
+#include <system_error>
 #include "serial_port.hpp"
 
-int main(void)
+int main(int argc, char* argv[])
 {
-    //create instance of serial device
-    sp::SerialDevice serial_device;
-    //get list of available serial ports in the system
-    auto actual_list = serial_device.getListOfAvailableDevices();
-    if(actual_list.size() > 0)
+    if(argc != 3)
     {
-        //print available ports
-        for(auto i = 0; i < actual_list.size(); ++i)
-        {
-            std::cout<<" available device : "<<actual_list[i]<<" | index : "<<i<<"\n";
-        }
+        std::printf("incorrect arguments list passed, exit...\n");
+        return 0;
     }
-    else
+    // strings with port names, by default it will search in /dev/ on Linux and Apple machines
+    std::string port_1_path = argv[1];
+    std::string port_2_path  = argv[2];
+
+    // default port config was created in constructor
+    sp::PortConfig config;
+    std::error_code stat;
+    // port instances
+    sp::SerialPort test_port_1;
+    sp::SerialPort test_port_2;
+
+    stat = test_port_1.open(port_1_path);
+    if(stat)
     {
-        std::cout<<"no available devises found, exit..."<<"\n";
+        std::cout<<"failed to open port " + port_1_path + "\n"; 
+        std::cout<<"error: "<<stat.message()<<"\n";
+        return 0;
     }
-    
+    stat = test_port_1.setup(config);
+    if(stat)
+    {
+        std::cout<<"failed to setup port " + port_1_path + "\n"; 
+        std::cout<<"error: "<<stat.message()<<"\n";
+        return 0;
+    }
+    stat = test_port_2.open(port_2_path);
+    if(stat)
+    {
+        std::cout<<"failed to open port " + port_2_path + "\n";
+        std::cout<<"error: "<<stat.message()<<"\n";
+        return 0;
+    }
+    stat = test_port_2.setup(config);
+    if(stat)
+    {
+        std::cout<<"failed to setup port " + port_2_path + "\n";  
+        std::cout<<"error: "<<stat.message()<<"\n";
+        return 0;
+    }
+    if((test_port_1.getState() == sp::PortState::Open) && (test_port_2.getState() == sp::PortState::Open))
+    {
+        // we will sent data to test_port_1 and read it back in test_port_2
+        std::cout<<"port on path " <<test_port_1.getPath()<<" opened successfully." <<"\n";
+        std::cout<<"port on path " <<test_port_2.getPath()<<" opened successfully." <<"\n";
+        std::string data_to_send = "This is a test string with length more than 32 bytes";
+        std::vector<std::uint8_t> data_to_read;
+        std::cout<<"DATA SENT :"<<data_to_send<<"\n"<<"\n";
+        test_port_1.writeString(data_to_send);
+        auto bytes_read = test_port_2.readBinary(data_to_read,data_to_send.size());
+        std::cout<<"BYTES READ :"<<bytes_read<<"\n";
+        std::string received_data(data_to_read.begin(),data_to_read.end());
+        std::cout<<"DATA READ :"<<received_data<<"\n"<<"\n";
+        std::cout<<" test finished, exit..." <<"\n";
+    }
+    test_port_1.close();
+    test_port_2.close();
     return 0;
 }
 ```
